@@ -12,73 +12,78 @@ using System.Windows.Forms;
 
 namespace Client
 {
-    public partial class Form1 : Form
+    public partial class ClientView : Form,IClientView
     {
-        byte[] outStream;
-        System.Net.Sockets.TcpClient clientSocket = new System.Net.Sockets.TcpClient();
-        NetworkStream serverStream = default(NetworkStream);
-        string readData = null;
-
-        public Form1()
+       
+            
+        public ClientView()
         {
             InitializeComponent();
-            clientSocket.Connect("127.0.0.1", 1024);
-
-
-            Thread oko = new Thread(getMessage);
-            oko.Start();
-
+            connect();            
         }
 
+        public event EventHandler<TryToConnectEventArgs> ConnectionTry;
+        public event EventHandler<EventArgs> Disconnect;
+        public event EventHandler<MessageSendEventArgs> MessageSend;
 
-        public void AppendTextBox(string value)
+        public void DisplayMessage(string message)
         {
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action<string>(AppendTextBox), new object[] { value });
-                return;
-            }
-            //
-            textBox1.Text += value;
-        }
 
+            string text = "Serwer: " + message;
+            Action<string> updateAction = new Action<string>((value) => textBox1.AppendText(value));
+            textBox1.Invoke(updateAction,text);
+            textBox1.Invoke(updateAction, Environment.NewLine);
+        }
+        public void SetConnectionSucceeded()
+        {
+            button1.Invoke((MethodInvoker)(() => { button1.Visible = true; }));
+            button2.Invoke((MethodInvoker)(() => { button2.Visible = false; }));
+        }
         private void button1_Click(object sender, EventArgs e)
         {
-            
-            serverStream = clientSocket.GetStream();
+            if (textBox2.Text == "")
+                return;
+            textBox1.AppendText("Ja: "+textBox2.Text + Environment.NewLine);            
+            var args = new MessageSendEventArgs(textBox2.Text);
+            MessageSend?.Invoke(this, args);
+            textBox2.Clear();
+        }
 
-            outStream = System.Text.Encoding.ASCII.GetBytes(textBox2.Text);
-            serverStream.Write(outStream, 0, outStream.Length);
-            serverStream.Flush();
-        }
-        private void getMessage()
+        public void SetConnectionError()
         {
-            while (true)
+            
+            button1.Invoke((MethodInvoker)(() => { button1.Visible = false; }));
+            button2.Invoke((MethodInvoker)(() => { button2.Visible = true; }));
+
+            MessageBoxButtons buttons = MessageBoxButtons.RetryCancel;
+            string message = "Błąd połączenia z serwerem";
+            string caption = "Błąd połączenia";
+            DialogResult result;
+            result = MessageBox.Show(message, caption, buttons);
+            if (result == DialogResult.Retry)
             {
-                serverStream = clientSocket.GetStream();
-                int buffSize = 0;
-                byte[] inStream = new byte[10025];
-                buffSize = clientSocket.ReceiveBufferSize;
-                serverStream.Read(inStream, 0, buffSize);
-                string returndata = System.Text.Encoding.ASCII.GetString(inStream);
-                readData = "" + returndata;
-               // Console.WriteLine(readData);
-                AppendTextBox(readData);
+                connect();
             }
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }        
         }
+        //tymczasowo
+        private void connect()
+        {
+            var args = new TryToConnectEventArgs("127.0.0.1",1024);
+           ConnectionTry?.Invoke(this, args);
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
-            serverStream = clientSocket.GetStream();
-
-            outStream = System.Text.Encoding.ASCII.GetBytes("Moja wiadomosc" + "$");
-            serverStream.Write(outStream, 0, outStream.Length);
-            serverStream.Flush();
+            connect();
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void ClientView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            serverStream.Close();
-            clientSocket.Close();
+            Disconnect?.Invoke(this, EventArgs.Empty);
         }
     }
 }
