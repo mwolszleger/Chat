@@ -8,21 +8,21 @@ using System.Net;
 
 namespace Serwer
 {
-    using StringSocketPair = Tuple<string, Socket>;
 
     class Connection
     {
         #region Private Variables
-        private Socket serverSocket_;
-        private int serverPort_ = 1024;
-        private List<StringSocketPair> clientSockets_;
+        private Socket _serverSocket;
+        private int _serverPort = 1024;
+        //private List<Client> _clientSockets;
+        private string[] nameTab = { "oko", "autor", "myszka miki", "zdzisiek", "kubek", "scooby doo", "cokolwiek", "foo", "test", "odbiorca" };
         #endregion
 
         public Connection()
         {
-            serverSocket_ = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-            serverSocket_.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), serverPort_));
-            clientSockets_ = new List<StringSocketPair>();
+            _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+            _serverSocket.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), _serverPort));
+           // _clientSockets = new List<Client>();
             Console.WriteLine("Server wystartowal...");
         }
 
@@ -30,82 +30,53 @@ namespace Serwer
         #region Server Methods
         public void Listen()
         {
-            serverSocket_.Listen(1);
+            _serverSocket.Listen(1);
             Console.WriteLine("Serwer czeka na polaczenie.");
         }
 
-        public Socket Accept()
+        public void BeginAccept()
         {
-            return serverSocket_.Accept();
+            _serverSocket.BeginAccept(AcceptCallback, _serverSocket);
         }
+
+
+        private void AcceptCallback(IAsyncResult result)
+        {
+            Socket server = (Socket)result.AsyncState;
+            Random foo = new Random();
+            String oko = nameTab[foo.Next(0, nameTab.Length - 1)];
+            Client client = new Client(oko, server.EndAccept(result));
+            Console.WriteLine("Polaczyl sie " +oko);
+
+
+            client.BeginReceive();
+
+            server.BeginAccept(AcceptCallback, server); // <- continue accepting connections
+        }
+
         #endregion
 
         #region Handling Client Methods
 
-        public void AddClient(StringSocketPair client)
+        /*public void AddClient(Client client)
         {
-            clientSockets_.Add(client);
-            Console.WriteLine("Polaczyl sie klient: " + client.Item1);
+            _clientSockets.Add(client);
+            //Console.WriteLine("Polaczyl sie klient: " + client.Item1);
         }
-        
-        public StringSocketPair GetClient()
+
+        public Client GetClient()
         {
-            return clientSockets_[0];
+            return _clientSockets[0];
         }
-        
-        public void DisconnectClient(StringSocketPair client)
+
+        public void DisconnectClient(Client client)
         {
-            clientSockets_.Remove(client);
-            Console.WriteLine("Klient sie rozlaczyl: " + client.Item1);
-        }
+            _clientSockets.Remove(client);
+            //Console.WriteLine("Klient sie rozlaczyl: " + client.Item1);
+        }*/
 
         #endregion
 
-        #region Communication Methods
-
-        public bool SendMessage(string author, string receiver, string content)
-        {
-            try
-            {
-                Socket client = clientSockets_[clientSockets_.FindIndex(t => t.Item1 == receiver)].Item2;
-                //client.Send(CreateByteArray("author"));
-                //client.Send(ConcatenateByteArrays(new List<byte[]> { CreateByteArray("author"), CreateByteArray("foo") }));
-                Console.WriteLine("Wyslano wiadomosc do:" + receiver);
-                return true;
-            }
-            catch(Exception e)
-            {
-                return false;
-            }
-        }
-
-        public void ReceiveMessage(string str)
-        {
-            string[] temp = str.Split(':');
-            //temp[0] = order
-            //temp[1] = author/login
-            //temp[2] = receiver/password
-            //temp[3] = content
-        }
-
-        private static byte[] CreateByteArray(string str)
-        {
-            return System.Text.Encoding.ASCII.GetBytes(str);
-        }
-
-        private static byte[] ConcatenateByteArrays(List<byte[]> listOfBytes)
-        {
-            byte[] concatenation = new byte[listOfBytes.Sum(item => item.Length)];
-            int leng = 0;
-            foreach(byte[] array in listOfBytes)
-            {
-                System.Buffer.BlockCopy(array, 0, concatenation, leng, array.Length);
-                leng += array.Length;
-            }
-            return concatenation;
-        }
-
-        #endregion
 
         #endregion
     }

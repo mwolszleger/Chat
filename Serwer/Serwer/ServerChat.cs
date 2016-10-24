@@ -20,15 +20,15 @@ namespace Serwer
             Connection server = new Connection();
             Thread th;
 
-            while (true)
-            {              
+            //while (true)
+            //{              
                 server.Listen();
-                
-                server.AddClient(GetStringSocketPair(server.Accept()));
-                server.SendMessage("foo", "author", "foo");
-                th = new Thread(() => writing(GetSocketFromPair(server.GetClient())));
-
-            }     
+                server.BeginAccept();
+                //server.AddClient(GetStringSocketPair(server.Accept()));
+                //server.SendMessage("foo", "author", "foo");
+                //th = new Thread(() => writing(GetSocketFromPair(server.GetClient())));
+                //th.Start();
+           // }     
             Console.Read();
         }
 
