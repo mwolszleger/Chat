@@ -45,7 +45,12 @@ namespace Client
                 return;
             textBox1.AppendText("Ja: "+textBox2.Text + Environment.NewLine);            
             var args = new MessageSendEventArgs(textBox2.Text);
-            MessageSend?.Invoke(this, args);
+            //MessageSend?.Invoke(this, args);
+            var handler = MessageSend;
+            if (handler != null)
+            {
+                handler(this, args);
+            }
             textBox2.Clear();
         }
 
@@ -73,7 +78,11 @@ namespace Client
         private void connect()
         {
             var args = new TryToConnectEventArgs("127.0.0.1",1024);
-           ConnectionTry?.Invoke(this, args);
+            var handler = ConnectionTry;
+            if (handler != null)
+            {
+                handler(this, args);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -83,7 +92,12 @@ namespace Client
 
         private void ClientView_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Disconnect?.Invoke(this, EventArgs.Empty);
+            //Disconnect?.Invoke(this, EventArgs.Empty);
+            var handler = Disconnect;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
         }
     }
 }

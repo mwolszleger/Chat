@@ -42,20 +42,35 @@ namespace Client
             try
             {
                 clientSocket = new System.Net.Sockets.TcpClient();
-            clientSocket.Connect(ip, port);
-            serverStream = default(NetworkStream);
-            Connected = true;
-            recievingThread = new Thread(getMessage);
-            recievingThread.Start();
-            var args = new ConnectionChangedEventArgs(true);
-            ConnectionChanged?.Invoke(this, args);
+                clientSocket.Connect(ip, port);
+                serverStream = default(NetworkStream);
+                Connected = true;
+                recievingThread = new Thread(getMessage);
+                recievingThread.Start();
+                var args = new ConnectionChangedEventArgs(true);
+                //ConnectionChanged?.Invoke(this, args);
+                var handler = ConnectionChanged;
+                if (handler != null)
+                {
+                    handler(this, args);
+                }
+                string[] nameTab = { "log1", "log2", "log3", "log4", "log5", "log6", "log7", "log8", "log9", "log10" };
+
+                Random foo = new Random();
+                String oko = nameTab[foo.Next(0, nameTab.Length - 1)];
+                //sendMessage("login:"+oko+":"+"haslo");
             }
             catch (Exception e)
             {
 
                 Connected = false;
                 var args = new ConnectionChangedEventArgs(false);
-                ConnectionChanged?.Invoke(this, args);
+                //ConnectionChanged?.Invoke(this, args);
+                var handler = ConnectionChanged;
+                if (handler != null)
+                {
+                    handler(this, args);
+                }
             }
         }
         public void close()
@@ -96,8 +111,12 @@ namespace Client
                         serverStream.Read(inStream, 0, buffSize);
                         string returndata = System.Text.Encoding.ASCII.GetString(inStream);
                         var args = new MessageRecievedEventArgs(returndata);
-                        MessageRecieved?.Invoke(this, args);
-
+                        //MessageRecieved?.Invoke(this, args);
+                        var handler = MessageRecieved;
+                        if (handler != null)
+                        {
+                            handler(this, args);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -106,7 +125,12 @@ namespace Client
                         Connected = false;
                         clientSocket.Close();
                         var args = new ConnectionChangedEventArgs(false);
-                        ConnectionChanged?.Invoke(this, args);
+                        // ConnectionChanged?.Invoke(this, args);
+                        var handler = ConnectionChanged;
+                        if (handler != null)
+                        {
+                            handler(this, args);
+                        }
                     }
                 }
 
