@@ -15,8 +15,15 @@ namespace Client
         static void Main()
         {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            // Application.SetCompatibleTextRenderingDefault(false);
+            Client model = new Client();
+            ClientView view = new ClientView();
+            Presenter presenter = new Presenter(view, model);
+
+
+            Application.Run(view);
+
+
         }
     }
 }
