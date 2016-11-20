@@ -19,11 +19,8 @@ namespace Client
             Client model = new Client();
             ClientView view = new ClientView();
             Presenter presenter = new Presenter(view, model);
-
-
             Application.Run(view);
-
-
+           
         }
     }
 }

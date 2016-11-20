@@ -37,7 +37,7 @@ namespace Client
 
         private void View_MessageSend(object sender, MessageSendEventArgs e)
         {
-            model.sendMessage(e.Message);
+            model.SendTextMessage(e.Message,e.Reciever);
         }
 
         private void View_Disconnect(object sender, EventArgs e)
@@ -47,7 +47,7 @@ namespace Client
 
         private void View_ConnectionTry(object sender, TryToConnectEventArgs e)
         {
-            model.connectToServer(e.Ip,e.Port);
+            model.connectToServer(e.Ip,e.Port,e.Login,e.Password);
         }
     }
 }
