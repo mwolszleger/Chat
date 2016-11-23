@@ -10,19 +10,24 @@ namespace Client
     {
         public string Ip { get; private set; }
         public int Port { get; private set; }
-        public TryToConnectEventArgs(string ip,int port)
+        public string Login { get; private set; }
+        public string Password { get; private set; }
+        public TryToConnectEventArgs(string ip,int port,string login,string password)
         {
             Ip = ip;
             Port = port;
+            Login = login;
+            Password = password;
         }
     }
     public class MessageSendEventArgs : EventArgs
     {
         public string Message { get; private set; }
-
-        public MessageSendEventArgs(string message)
+        public string Reciever { get; private set; }
+        public MessageSendEventArgs(string message,string reciever)
         {
             Message = message;
+            Reciever = reciever;
         }
     }
     interface IClientView

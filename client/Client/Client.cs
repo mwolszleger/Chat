@@ -32,12 +32,12 @@ namespace Client
         public event EventHandler<ConnectionChangedEventArgs> ConnectionChanged;
         public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
         private bool Connected = false;
-
+        public string Login{get;private set;}
 
         private System.Net.Sockets.TcpClient clientSocket = new System.Net.Sockets.TcpClient();
         private NetworkStream serverStream = default(NetworkStream);
         private Thread recievingThread;
-        public void connectToServer(String ip, int port)
+        public void connectToServer(String ip, int port,string login,string password)
         {
             try
             {
@@ -47,6 +47,8 @@ namespace Client
                 Connected = true;
                 recievingThread = new Thread(getMessage);
                 recievingThread.Start();
+                sendMessage("login:"+login+":"+password);
+                Login = login;
                 var args = new ConnectionChangedEventArgs(true);
                 //ConnectionChanged?.Invoke(this, args);
                 var handler = ConnectionChanged;
@@ -54,11 +56,7 @@ namespace Client
                 {
                     handler(this, args);
                 }
-                string[] nameTab = { "log1", "log2", "log3", "log4", "log5", "log6", "log7", "log8", "log9", "log10" };
-
-                Random foo = new Random();
-                String oko = nameTab[foo.Next(0, nameTab.Length - 1)];
-                //sendMessage("login:"+oko+":"+"haslo");
+                
             }
             catch (Exception e)
             {
@@ -75,9 +73,13 @@ namespace Client
         }
         public void close()
         {
+            
+            if (Connected)
+            {
+                serverStream.Close();
+                clientSocket.Close();
+            }
             Connected = false;
-            serverStream.Close();
-            clientSocket.Close();
 
         }
         public void sendMessage(string message)
@@ -86,6 +88,7 @@ namespace Client
             {
                 serverStream = clientSocket.GetStream();
                 byte[] outStream;
+                
                 outStream = System.Text.Encoding.ASCII.GetBytes(message);
                 serverStream.Write(outStream, 0, outStream.Length);
                 serverStream.Flush();
@@ -138,5 +141,13 @@ namespace Client
         }
 
 
+
+
+
+        public void SendTextMessage(string message, string reciever)
+        {
+            string msg = "sendMsg:" + Login + ":" + reciever + ":" + message;
+            sendMessage(msg);
+        }
     }
 }
