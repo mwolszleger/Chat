@@ -38,7 +38,7 @@ namespace Client
             }
         }
 
-        private List<Form2> conversation = new List<Form2>();
+        private Dictionary<int,Form2> conversations = new Dictionary<int,Form2>();
         public event EventHandler<TryToConnectEventArgs> ConnectionTry;
         public event EventHandler<EventArgs> Disconnect;
         public event EventHandler<MessageSendEventArgs> MessageSend;
@@ -153,18 +153,20 @@ namespace Client
 
         public void NewConversation(int id, string login)
         {
-            Action newWindow = new Action(() => conversation[id].Show());
-            if (id >= conversation.Count)
+
+            
+
+            if (!conversations.ContainsKey(id))
             {
-                Action createWindow = new Action(() => conversation.Add(new Form2(id)));
+                Action createWindow = new Action(() => conversations.Add(id,new Form2(id)));
                 BeginInvoke(createWindow);
                 //conversation.Add(new Form2(id));
-                //IntPtr handle = conversation[id].Handle;
-                
+                //IntPtr handle = conversations[id].Handle;
 
+                Action newWindow = new Action(() => conversations[id].Show());
                 BeginInvoke(newWindow);
 
-                Action newEvent = new Action(() => conversation[id].MessageSend += ClientView_MessageSend);
+                Action newEvent = new Action(() => conversations[id].MessageSend += ClientView_MessageSend);
 
                 BeginInvoke(newEvent);
 
@@ -172,7 +174,7 @@ namespace Client
             }
             else
             {
-                
+                Action newWindow = new Action(() => conversations[id].Show());
                 BeginInvoke(newWindow);
             }
         }
@@ -182,7 +184,7 @@ namespace Client
         public void DisplayMessage(string message, int id)
         {
             //MessageBox.Show("wyswietlam");
-            conversation[id].DisplayMessage(message);
+            conversations[id].DisplayMessage(message);
            
         }
 
