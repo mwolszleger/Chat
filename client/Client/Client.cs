@@ -72,8 +72,8 @@ namespace Client
        private NetworkStream serverStream = default(NetworkStream);
       
         private List<User> users = new List<User>();
-        private List<Conversation> conversations = new List<Conversation>();
-
+        //private List<Conversation> conversations = new List<Conversation>();
+        private Dictionary <int,Conversation> conversations = new Dictionary<int,Conversation>();
         #region Tymczasowy bufer
         private byte[] _buffer;
         #endregion
@@ -248,28 +248,30 @@ namespace Client
 
         public void NewConversationStart(string login)
         {
+           
             int index=-1;
-            for (int i=0;i<conversations.Count; i++)
+            foreach (var item in conversations)
             {
-                if (conversations[i].user.login == login)
+                if (item.Value.user.login == login)
                 {
-                    index = i;
+                    index = item.Key;
                     break;
                 }
             }
-           
+            //MessageBox.Show("nadano:" + index);
             if (index == -1)
             {
                 foreach (var item in users)
                 {
                     if (item.login == login)
                     {
-                        conversations.Add(new Conversation(item));
-                        index = conversations.Count - 1;
+                        index = newConversationIndex();
+                        conversations.Add(newConversationIndex(),new Conversation(item));
+                        
                     }
                 }
             }
-            
+            //MessageBox.Show("nadano:"+index);
             var args = new ConversationArgs(login,index);
             //MessageRecieved?.Invoke(this, args);
             var handler = ConversationStart;
@@ -277,7 +279,7 @@ namespace Client
             {
                 handler(this, args);
             }
-
+            //MessageBox.Show(index.ToString());
 
 
 
@@ -320,15 +322,18 @@ namespace Client
         {
             NewConversationStart(author);
             int index=-1;
-            for (int i = 0; i < conversations.Count; i++)
+            foreach (var item in conversations)
             {
-                if (conversations[i].user.login == author)
+                if (item.Value.user.login==author)
                 {
-                    index = i;
+                    index = item.Key;
                     break;
                 }
             }
 
+
+
+            //MessageBox.Show("cztery");
             var args = new MessageRecievedEventArgs(content, index);
             //MessageRecieved?.Invoke(this, args);
             var handler = MessageRecieved;
@@ -337,6 +342,17 @@ namespace Client
                 handler(this, args);
             }
 
+        }
+        private int newConversationIndex()
+        {
+            int index = -1;
+            foreach (var it in conversations)
+            {
+                if (it.Key > index)
+                    index = it.Key;
+
+            }
+            return ++index;
         }
     }
 }
