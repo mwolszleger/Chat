@@ -47,14 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="User.cs" />
     <Compile Include="Client.cs" />
-    <Compile Include="ILogView.cs" />
-    <Compile Include="LogInPresenter.cs" />
-    <Compile Include="LogView.cs">
+    <Compile Include="Conversation.cs" />
+    <Compile Include="Form2.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LogView.Designer.cs">
-      <DependentUpon>LogView.cs</DependentUpon>
+    <Compile Include="Form2.Designer.cs">
+      <DependentUpon>Form2.cs</DependentUpon>
     </Compile>
     <Compile Include="Presenter.cs" />
     <Compile Include="ClientView.cs">
@@ -69,8 +69,8 @@
     <EmbeddedResource Include="ClientView.resx">
       <DependentUpon>ClientView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LogView.resx">
-      <DependentUpon>LogView.cs</DependentUpon>
+    <EmbeddedResource Include="Form2.resx">
+      <DependentUpon>Form2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

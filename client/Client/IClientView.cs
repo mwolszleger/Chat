@@ -23,21 +23,25 @@ namespace Client
     public class MessageSendEventArgs : EventArgs
     {
         public string Message { get; private set; }
-        public string Reciever { get; private set; }
-        public MessageSendEventArgs(string message,string reciever)
+        public int Id { get; private set; }
+        public MessageSendEventArgs(string message,int id)
         {
             Message = message;
-            Reciever = reciever;
+            Id = id;
         }
     }
     interface IClientView
     {
-        void Show();
+
+        void NewConversation(int id, string login);
         void SetConnectionError();
         void SetConnectionSucceeded();
-        void DisplayMessage(string message);
+        void DisplayMessage(string message,int id);
+        void newUser(string login, bool logged);
+        void UserChanged(string login, bool logged);
         event EventHandler<TryToConnectEventArgs> ConnectionTry;
         event EventHandler<MessageSendEventArgs> MessageSend;
         event EventHandler<EventArgs> Disconnect;
+        event EventHandler<string> NewConversationStart;
     }
 }
