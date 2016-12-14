@@ -67,20 +67,28 @@ namespace Serwer
         public Client()
         {
         }
-     
+
         #region Methods
 
         public void BeginReceive()
         {
-            _clientSocket.BeginReceive(_buffer, 0, 1024, SocketFlags.None, new AsyncCallback(ReceiveCallback), this);
+            try
+            {
+                _clientSocket.BeginReceive(_buffer, 0, 1024, SocketFlags.None, new AsyncCallback(ReceiveCallback), this);
+
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         private void ReceiveCallback(IAsyncResult result)
         {
             Client myClient = (Client)result.AsyncState;
 
-            if (!(myClient.ClientSocket.Poll(1, SelectMode.SelectRead) && myClient.ClientSocket.Available == 0))
-            {
+            if (!(myClient.ClientSocket.Poll(1000, SelectMode.SelectRead) && myClient.ClientSocket.Available == 0))
+            {               
                 BeginReceive();
                 //tell server, that i received message
                 this.FireMessageReceivedEvent(CreateStringFromByteArray(_buffer));
@@ -91,7 +99,7 @@ namespace Serwer
             {
                 Console.WriteLine("Stracono polaczenie z " + myClient.Name);
                 FireDisconnectedEvent(myClient.Name);
-            }       
+            }
         }
 
         #region StaticMethods
@@ -121,7 +129,6 @@ namespace Serwer
 
         #endregion
     }//end of Client class
-
 
     public class EventArgsWithContent : EventArgs
     {
