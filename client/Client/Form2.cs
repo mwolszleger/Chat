@@ -42,6 +42,7 @@ namespace Client
             {
                 handler(this, args);
             }
+            
             textBox2.Clear();
         }
 

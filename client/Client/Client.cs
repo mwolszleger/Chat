@@ -61,7 +61,7 @@ namespace Client
         private bool Logged = false;
         public string Login { get; private set; }
 
-      
+        private string recievedBuffer = "";
 
         #region Zmiana
         //zmien pozniej na prywatny i zeby nie byl statyczny
@@ -112,6 +112,7 @@ namespace Client
                 newUser("t2", true);
                
                 newUser("t3", true);
+                
             }
             catch (Exception e)
             {
@@ -126,6 +127,7 @@ namespace Client
                     handler(this, args);
                 }
             }
+           
         }
 
 
@@ -157,7 +159,7 @@ namespace Client
                     //tutaj faktycznie odbierasz jakas wiadomosc
                     int count = _buffer.Count(bt => bt != 0); // find the first null
                     string message = Encoding.ASCII.GetString(_buffer, 0, count);
-                    processRecievedMessage(message);
+                    processMessage(message);
                 
                     // MessageBox.Show(ASCIIEncoding.ASCII.GetString(_buffer));
 
@@ -173,6 +175,29 @@ namespace Client
             {
                 MessageBox.Show(e.Message);
             }
+        }
+
+        private void processMessage(string message)
+        {
+            Console.WriteLine("odebrano:"+message);
+            string length = "";
+            recievedBuffer += message;
+            foreach (var item in recievedBuffer)
+            {
+                if (char.IsDigit(item))
+                    length += item;
+                else
+                    break;
+            }
+            if (recievedBuffer.Length >= length.Length + Int32.Parse(length))
+                processOrder(message.Substring(length.Length, Int32.Parse(length)));
+            else
+                return;
+            recievedBuffer = recievedBuffer.Substring(length.Length + Int32.Parse(length));
+            //MessageBox.Show("zostalo"+recievedBuffer);
+            if (recievedBuffer != "")
+                processMessage(recievedBuffer);
+
         }
 
         #endregion
@@ -192,7 +217,8 @@ namespace Client
         {
             try
             {
-                clientSocket.Send(System.Text.Encoding.ASCII.GetBytes(message));
+                //MessageBox.Show("wyslano:"+message.Length + message);
+                clientSocket.Send(System.Text.Encoding.ASCII.GetBytes(message.Length+message));
             }
             catch (Exception e)
             {
@@ -202,6 +228,8 @@ namespace Client
         public void SendTextMessage(string message, int id)
         {
             string msg = "sendMsg:" + Login + ":" + conversations[id].user.login + ":" + message;
+            sendMessage(msg);
+            sendMessage(msg);
             sendMessage(msg);
         }
         private void newUser(string login,bool logged)
@@ -286,10 +314,10 @@ namespace Client
         }
 
 
-        private void processRecievedMessage(string message)
+        private void processOrder(string message)
         {
           
-           // MessageBox.Show(message);
+            MessageBox.Show("rozkaz:"+message);
             if (!Logged)
             {
                 if (message=="logged")
