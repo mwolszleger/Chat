@@ -153,7 +153,7 @@ namespace Client
                 if (!(mySock.Poll(1000, SelectMode.SelectRead) && mySock.Available == 0))
                 {
                     
-                    BeginReceive();
+                   
                     //this.FireMessageReceivedEvent(CreateStringFromByteArray(_buffer));
 
                     //tutaj faktycznie odbierasz jakas wiadomosc
@@ -164,6 +164,7 @@ namespace Client
                     // MessageBox.Show(ASCIIEncoding.ASCII.GetString(_buffer));
 
                     Array.Clear(_buffer, 0, _buffer.Length);
+                    BeginReceive();
                 }
                 else
                 {
@@ -176,12 +177,9 @@ namespace Client
                 MessageBox.Show(e.Message);
             }
         }
-
-        private void processMessage(string message)
+        private void processBuffer()
         {
-            Console.WriteLine("odebrano:"+message);
             string length = "";
-            recievedBuffer += message;
             foreach (var item in recievedBuffer)
             {
                 if (char.IsDigit(item))
@@ -190,18 +188,44 @@ namespace Client
                     break;
             }
             if (recievedBuffer.Length >= length.Length + Int32.Parse(length))
-                processOrder(message.Substring(length.Length, Int32.Parse(length)));
+            {
+                processOrder(recievedBuffer.Substring(length.Length, Int32.Parse(length)));
+                //MessageBox.Show("doprzetw"+ message.Substring(length.Length, Int32.Parse(length)));
+            }
             else
                 return;
-            recievedBuffer = recievedBuffer.Substring(length.Length + Int32.Parse(length));
+            if (recievedBuffer.Length > length.Length + Int32.Parse(length))
+            {
+                recievedBuffer = recievedBuffer.Substring(length.Length + Int32.Parse(length));
+                //MessageBox.Show("zostalo coś");
+                //MessageBox.Show("caladlugosc" + recievedBuffer.Length);
+                //MessageBox.Show("cyfry" + length.Length);
+               // MessageBox.Show("reszta" + Int32.Parse(length));
+
+            }
+            else
+            {
+                recievedBuffer = "";
+                //MessageBox.Show("nic");
+            }
             //MessageBox.Show("zostalo"+recievedBuffer);
             if (recievedBuffer != "")
-                processMessage(recievedBuffer);
+                processBuffer();
+        }
+        private void processMessage(string message)
+        {
+          // MessageBox.Show("prztwarzam:"+message);
+            Console.WriteLine("dostalem"+message);
+
+            recievedBuffer += message;
+            processBuffer();
+           
 
         }
 
         #endregion
 
+        
         public void close()
         {
 
@@ -217,8 +241,10 @@ namespace Client
         {
             try
             {
-                //MessageBox.Show("wyslano:"+message.Length + message);
+                
                 clientSocket.Send(System.Text.Encoding.ASCII.GetBytes(message.Length+message));
+               
+                Console.WriteLine("wyslano:"+message.Length+message);
             }
             catch (Exception e)
             {
@@ -229,8 +255,8 @@ namespace Client
         {
             string msg = "sendMsg:" + Login + ":" + conversations[id].user.login + ":" + message;
             sendMessage(msg);
-            sendMessage(msg);
-            sendMessage(msg);
+            
+            
         }
         private void newUser(string login,bool logged)
         {
@@ -299,7 +325,7 @@ namespace Client
                     }
                 }
             }
-            //MessageBox.Show("nadano:"+index);
+            
             var args = new ConversationArgs(login,index);
             //MessageRecieved?.Invoke(this, args);
             var handler = ConversationStart;
@@ -317,7 +343,7 @@ namespace Client
         private void processOrder(string message)
         {
           
-            MessageBox.Show("rozkaz:"+message);
+           // MessageBox.Show("rozkaz:"+message);
             if (!Logged)
             {
                 if (message=="logged")
