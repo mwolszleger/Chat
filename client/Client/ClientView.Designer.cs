@@ -97,7 +97,6 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(236, 121);
             this.listBox1.TabIndex = 12;
-          // this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
             // 
             // listBox2
@@ -122,7 +121,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox5);
             this.Name = "ClientView";
-            this.Text = "Form1";
+            this.Text = "Chat";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ClientView_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
