@@ -10,4 +10,6 @@ public class Logowanie extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logowanie);
     }
+
+    //test
 }
