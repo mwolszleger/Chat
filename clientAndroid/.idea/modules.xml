@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/chatOfficial.iml" filepath="$PROJECT_DIR$/chatOfficial.iml" />
+      <module fileurl="file://$PROJECT_DIR$/clientAndroid.iml" filepath="$PROJECT_DIR$/clientAndroid.iml" />
     </modules>
   </component>
 </project>
