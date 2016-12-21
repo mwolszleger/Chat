@@ -136,7 +136,7 @@ namespace Serwer
         {
             _clientSockets.Remove(client);
             //informs all clients that someone disconnected
-            //this.InformEverybody("loggedOut:" + client.Name);
+            this.InformEverybody("loggedOut:" + client.Name);
         }
 
         #endregion
@@ -194,10 +194,8 @@ namespace Serwer
             {
                 //sends message as order, i.e. sendMsg:authorOfMessage:receiverOfMessage:content
                 //if you want to send msg to yourself, create order as "sendMsg:author:author:conent"
-                int len = 0;
 
-                len = commands.Sum(x => x.TrimEnd(new char[] { (char)0 }).Length) + 3;
-                GetClient(commands[2]).ClientSocket.Send(CreateByteArray(len + CreateOrder(commands)));
+                GetClient(commands[2]).ClientSocket.Send(CreateByteArray(AppendLength(CreateOrder(commands))));
                 return true;
             }
             else
@@ -222,8 +220,7 @@ namespace Serwer
                 if (_clientSockets.FindIndex(a => a.Name == item) != -1)
                 {
                     //sends message as order, i.e. broadcast:authorOfMessage:receiversOfMessage:content
-                    int len = commands.Sum(x => x.TrimEnd(new char[] { (char)0 }).Length) + 3;
-                    GetClient(item).ClientSocket.Send(CreateByteArray(len.ToString() + CreateOrder(commands)));
+                    GetClient(item).ClientSocket.Send(CreateByteArray(AppendLength(CreateOrder(commands))));
                     success = true;
                 }
                 else
@@ -242,17 +239,31 @@ namespace Serwer
 
         private Client Login(string nick, Socket client)
         {
+            string tmp = "";
+            string[] deleteArray;
             Client cl = new Client(nick, client);
             this.AddClient(cl);
 
             //informs about success
             this.InformSomebody("logged", client);
-            //this.InformAboutLoggedUsers(client);
+            this.InformAboutLoggedUsers(client);
             //send offline messages to him
-            // while (_myDBConnection.CheckOfflineMessages(nick))
-            //this.SendMsg(_myDBConnection.GetOfflineMessage(nick));
+            
+            while(true)
+            {
+                tmp = _myDBConnection.GetOfflineMessage(nick);
+                if (tmp != "")
+                {
+                    client.Send(CreateByteArray(tmp));
+                    deleteArray = SplitOrder(tmp);                 
+                    _myDBConnection.DeleteOfflineMessage(deleteArray[0], deleteArray[1], deleteArray[2], deleteArray[3]);
+                }
+                else
+                    break;
+            }
+            
             //informs everybody that someone logged
-            //this.InformEverybody("logged:" + nick);
+            this.InformEverybody("logged:" + nick);
 
             return cl;
         }
@@ -261,7 +272,7 @@ namespace Serwer
         {
             if (_myDBConnection.UserExists(nick))
             {
-                client.Send(CreateByteArray(("failToRegister").Length.ToString() + "failToRegister"));
+                client.Send(CreateByteArray(AppendLength("failToRegister")));
                 return null;
             }
             _myDBConnection.InsertUser(nick);//, splitedOrder[2]);
@@ -270,14 +281,16 @@ namespace Serwer
 
         private bool InformSomebody(string message, Socket client)
         {
-            client.Send(CreateByteArray(message.Length.ToString() + message));
+            client.Send(CreateByteArray(AppendLength(message)));
             return true;
         }
 
         private void InformEverybody(string message)
         {
+            string client = message.Split(':')[1];
             foreach (Client cl in _clientSockets)
-                cl.ClientSocket.Send(CreateByteArray(message.Length.ToString() + message));
+                if(cl.Name != client)
+                    InformSomebody(message, cl.ClientSocket);
         }
 
         private void InformAboutLoggedUsers(Socket loggedClient)
@@ -319,6 +332,11 @@ namespace Serwer
         private static string CreateOrder(string[] commands)
         {
             return commands[0] + ":" + commands[1] + ":" + commands[2] + ":" + commands[3];
+        }
+
+        private static string AppendLength(string str)
+        {
+            return str.Length + str;
         }
 
         #endregion
