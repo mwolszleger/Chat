@@ -34,16 +34,16 @@ namespace Serwer
         public void HandleMessageReceivedEvent(object sender, EventArgsWithContent args)
         {
             if (args.Content.Length != 0)
-            {
-                MakeOrdersFromMessage(args.Content);
-                foreach (string item in _ordersBuff)
+            {           
+                CreateOrdersFromMessage(args.Content);
+                int count = _ordersBuff.Count;
+                for (int i = 0; i < count;i++)
                 {
-                    HandleOrder(item, ((Client)sender).ClientSocket);
-                }
-                _ordersBuff.Clear();
+                    this.HandleOrder(_ordersBuff[0], ((Client)sender).ClientSocket);
+                    _ordersBuff.RemoveAt(0);
+                }                            
             }
         }
-
 
         public void HandleDisconnectedEvent(object sender, EventArgsWithContent args)
         {
@@ -71,17 +71,10 @@ namespace Serwer
 
             //wait for login/register order      
             clientSocket.Receive(_byteArray);
-
             //handle login/register order, creates new client
-            MakeOrdersFromMessage(CreateStringFromByteArray(_byteArray));
-            //string order = CreateStringFromByteArray(_byteArray);
-            Client client = null;
-            if (_ordersBuff.Count > 0)
-            {
-                client = this.HandleOrder(_ordersBuff[0], clientSocket);
-                _ordersBuff.RemoveAt(0);
-            }
-
+            Client client = this.HandleOrder(CreateOrdersFromMessage(CreateStringFromByteArray(_byteArray)), clientSocket);
+            _ordersBuff.RemoveAt(0);
+            Array.Clear(_byteArray, 0, _byteArray.Length);
             if (client != null)
             {
                 // server subscribes to client's MessageReceivedEvent
@@ -96,25 +89,32 @@ namespace Serwer
             server.BeginAccept(AcceptCallback, server);
         }
 
-        private void MakeOrdersFromMessage(string order)
+        private string CreateOrdersFromMessage(string message)
         {
-            string length = "";
-
-            foreach (char c in order)
+            string len = "";
+            foreach (char c in message)
             {
-                if (c != '\0')
-                {
-                    if (char.IsDigit(c))
-                        length += c;
-                    else if (length.Length != 0)
-                    {
-                        //'global' container for orders
-                        _ordersBuff.Add(order.Substring(length.Length, Int32.Parse(length)));
-                        MakeOrdersFromMessage(order.Remove(0, length.Length + Int32.Parse(length)));
-                        break;
-                    }
-                }
+                if (char.IsDigit(c))
+                    len += c;
+                else
+                    break;
             }
+            if (len != "")
+            {
+                message = message.Remove(0, len.Length);
+                if (message.Length > Int32.Parse(len))
+                {
+                    _ordersBuff.Add(message.Substring(0, Int32.Parse(len)));
+                    message = message.Remove(0, Int32.Parse(len));
+                    CreateOrdersFromMessage(message);
+                }
+                else
+                {
+                    _ordersBuff.Add(message);
+                }
+                return message;
+            }
+            return "";
         }
 
         #endregion
@@ -136,7 +136,7 @@ namespace Serwer
         {
             _clientSockets.Remove(client);
             //informs all clients that someone disconnected
-            this.InformEverybody("loggedOut:" + client.Name);
+            //this.InformEverybody("loggedOut:" + client.Name);
         }
 
         #endregion
@@ -185,7 +185,7 @@ namespace Serwer
         private bool SendMsg(string order)
         {
             string[] commands = SplitOrder(order);
-            Console.WriteLine(commands[1] + " wyslal wiadomosc " + commands[3]);
+            //Console.WriteLine(commands[1] + " wyslal wiadomosc " + commands[3]);
             //[0] = order
             //[1] = author
             //[2] = receiver
@@ -194,7 +194,10 @@ namespace Serwer
             {
                 //sends message as order, i.e. sendMsg:authorOfMessage:receiverOfMessage:content
                 //if you want to send msg to yourself, create order as "sendMsg:author:author:conent"
-                GetClient(commands[2]).ClientSocket.Send(CreateByteArray(commands.Length.ToString() + CreateOrder(commands)));
+                int len = 0;
+
+                len = commands.Sum(x => x.TrimEnd(new char[] { (char)0 }).Length) + 3;
+                GetClient(commands[2]).ClientSocket.Send(CreateByteArray(len + CreateOrder(commands)));
                 return true;
             }
             else
@@ -219,7 +222,8 @@ namespace Serwer
                 if (_clientSockets.FindIndex(a => a.Name == item) != -1)
                 {
                     //sends message as order, i.e. broadcast:authorOfMessage:receiversOfMessage:content
-                    GetClient(item).ClientSocket.Send(CreateByteArray(commands.Length.ToString() + CreateOrder(commands)));
+                    int len = commands.Sum(x => x.TrimEnd(new char[] { (char)0 }).Length) + 3;
+                    GetClient(item).ClientSocket.Send(CreateByteArray(len.ToString() + CreateOrder(commands)));
                     success = true;
                 }
                 else
@@ -245,8 +249,8 @@ namespace Serwer
             this.InformSomebody("logged", client);
             //this.InformAboutLoggedUsers(client);
             //send offline messages to him
-            while (_myDBConnection.CheckOfflineMessages(nick))
-                this.SendMsg(_myDBConnection.GetOfflineMessage(nick));
+            // while (_myDBConnection.CheckOfflineMessages(nick))
+            //this.SendMsg(_myDBConnection.GetOfflineMessage(nick));
             //informs everybody that someone logged
             //this.InformEverybody("logged:" + nick);
 
@@ -278,8 +282,9 @@ namespace Serwer
 
         private void InformAboutLoggedUsers(Socket loggedClient)
         {
-            foreach (Client cl in _clientSockets)
-                InformSomebody("logged:" + cl.Name, loggedClient);
+            if(_clientSockets.Count>0)
+                foreach (Client cl in _clientSockets)
+                    InformSomebody("logged:" + cl.Name, loggedClient);
         }
 
         #region Methods to simplify
@@ -311,7 +316,7 @@ namespace Serwer
             return temp;
         }
 
-        private static String CreateOrder(String[] commands)
+        private static string CreateOrder(string[] commands)
         {
             return commands[0] + ":" + commands[1] + ":" + commands[2] + ":" + commands[3];
         }

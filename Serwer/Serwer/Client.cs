@@ -77,7 +77,7 @@ namespace Serwer
                 _clientSocket.BeginReceive(_buffer, 0, 1024, SocketFlags.None, new AsyncCallback(ReceiveCallback), this);
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -88,12 +88,12 @@ namespace Serwer
             Client myClient = (Client)result.AsyncState;
 
             if (!(myClient.ClientSocket.Poll(1000, SelectMode.SelectRead) && myClient.ClientSocket.Available == 0))
-            {               
-                BeginReceive();
-                //tell server, that i received message
-                this.FireMessageReceivedEvent(CreateStringFromByteArray(_buffer));
-
+            {
+                string foo = CreateStringFromByteArray(_buffer);
                 Array.Clear(_buffer, 0, _buffer.Length);
+                //tell server, that i received message
+                this.FireMessageReceivedEvent(foo);
+                BeginReceive();
             }
             else
             {
@@ -136,7 +136,7 @@ namespace Serwer
 
         public EventArgsWithContent(string cont)
         {
-            this._content = cont;
+            this._content = cont.TrimEnd(new char[] { (char)0 });
         }
 
         public string Content

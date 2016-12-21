@@ -14,6 +14,7 @@ namespace Serwer
         private MySqlDataReader _reader;
         private MySqlConnection _dbConnection;
         private MySqlCommand _command;
+        private bool _inProgress;
 
         public DatabaseConnection()
         {
@@ -88,7 +89,6 @@ namespace Serwer
                 tmp += "\";";
                 _command.CommandText = tmp;
                 _reader = _command.ExecuteReader();
-
                 while (_reader.Read())
                 {
                     return true;
@@ -111,17 +111,28 @@ namespace Serwer
         {
             try
             {
-                string tmp = "";
-                tmp += "INSERT INTO chatdb.offlinemessages(type, author, receivers, content) VALUES (\"" + type + "\", \"" + author + "\", \"" + receiverS + "\", \"" + content+ "\");";
-                _command.CommandText = tmp;
-                _command.ExecuteNonQuery();
-                Console.WriteLine("Dodano wiadomosc Offline");
-
-                return true;
+            foo:
+                if (!_inProgress)
+                {
+                    _inProgress = true;
+                    string tmp = "";
+                    tmp += "INSERT INTO chatdb.offlinemessages(type, author, receivers, content) VALUES (\"" + type + "\", \"" + author + "\", \"" + receiverS + "\", \"" + content + "\");";
+                    _command.CommandText = tmp;
+                    _command.ExecuteNonQuery();
+                    if (_reader != null)
+                        _reader.Close();
+                    _inProgress = false;
+                    return true;
+                }
+                else
+                {
+                    System.Threading.Thread.Sleep(1);
+                    goto foo;
+                }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+               Console.WriteLine(e.Message);
                 return false;
             }
         }
@@ -136,11 +147,13 @@ namespace Serwer
                 string tmp = "SELECT * FROM chatdb.offlinemessages where receiverS like \"" + login + "%\";";
                 _command.CommandText = tmp;
                 _reader = _command.ExecuteReader();
-
                 while (_reader.Read())
                 {
+                    _reader.Close();
                     return true;
                 }
+
+                _reader.Close();
                 return false;
             }
             catch (Exception e)
@@ -155,9 +168,9 @@ namespace Serwer
         }
         public string GetOfflineMessage(string login)
         {
-          try
+            try
             {
-                string tmp = "SELECT * FROM chatdb.offlinemessages where receiverS like \"" + login +  "\" limit 1;";
+                string tmp = "SELECT * FROM chatdb.offlinemessages where receiverS like \"" + login + "\" limit 1;";
                 _command.CommandText = tmp;
                 _reader = _command.ExecuteReader();
                 while (_reader.Read())
@@ -170,7 +183,7 @@ namespace Serwer
                     //send this message
                     _reader.Close();
                     Console.WriteLine("offlineorder: " + tmp);
-                    DeleteOfflineMessage(type, author, receiverS, content);                 
+                    DeleteOfflineMessage(type, author, receiverS, content);
                 }
                 return tmp;
             }
