@@ -127,27 +127,40 @@ namespace Client
 
         public void newUser(string login, bool logged)
         {
+           // MessageBox.Show("nowy"+login);
             if (logged)
             {
-                listBox1.Items.Add(login);
+                Action add = new Action(() => listBox1.Items.Add(login));
+                BeginInvoke(add);
             }
             else
             {
-                listBox2.Items.Add(login);
+                Action add = new Action(() => listBox2.Items.Add(login));
+                BeginInvoke(add);
             }
         }
 
         public void UserChanged(string login, bool logged)
         {
+            //MessageBox.Show("zmienia"+login);
             if (logged)
             {
-                listBox1.Items.Add(login);
-                listBox2.Items.Remove(login);
+                
+                Action add = new Action(() => listBox1.Items.Add(login));
+                BeginInvoke(add);
+                Action remove = new Action(() => listBox2.Items.Remove(login));
+                BeginInvoke(remove);
+               
+                
             }
             else
             {
-                listBox2.Items.Add(login);
-                listBox1.Items.Remove(login);
+
+                Action add = new Action(() => listBox2.Items.Add(login));
+                BeginInvoke(add);
+                Action remove = new Action(() => listBox1.Items.Remove(login));
+                BeginInvoke(remove);
+             
             }
         }
 
