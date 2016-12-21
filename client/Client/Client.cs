@@ -275,6 +275,8 @@ namespace Client
             {
                 if (item.login == login)
                 {
+                    if (item.logged = logged)
+                        return;
                     item.logged = logged;
                     break;
                 }
@@ -363,8 +365,22 @@ namespace Client
                     recievedMessage(splitted[1], splitted[2], splitted[3]);
                     break;
                 case "logged":
-                    newUser(splitted[1],true);
-                    break;                       
+                    int id = findUserId(splitted[1]);
+                   
+                    if (id == -1)
+                    {
+                       newUser(splitted[1], true);
+                    }
+                    else
+                        changeUser(splitted[1], true); 
+                    break;
+                case "loggedOut":
+                    int id2 = findUserId(splitted[1]);
+                    if (id2 == -1)
+                        newUser(splitted[1],false);
+                    else
+                        changeUser(splitted[1], false);
+                    break;
                 default:
                     break;
             }
@@ -408,5 +424,15 @@ namespace Client
             }
             return ++index;
         }
+        private int findUserId(string login)
+        {
+            for (int i = 0; i < users.Count; i++)
+            {
+                if (users[i].login == login)
+                    return i;
+            }
+            return -1;
+        }
+
     }
 }
