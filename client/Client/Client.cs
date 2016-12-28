@@ -264,7 +264,7 @@ namespace Client
                 msg = "broadcast:" + Login + ":";
                 for (int i = 0; i < conversations[id].users.Count-1; i++)
                 {
-                    msg += conversations[id].users[i].login + ", ";
+                    msg += conversations[id].users[i].login + ",";
                 }
                 msg += conversations[id].users.Last().login;
                 msg += ":" + message;
@@ -430,9 +430,7 @@ namespace Client
                 }
             }
 
-            MessageBox.Show("indeks"+index);
-            MessageBox.Show("1");
-            //MessageBox.Show("cztery");
+            
             var args = new MessageRecievedEventArgs(content, index);
             //MessageRecieved?.Invoke(this, args);
             var handler = MessageRecieved;
