@@ -120,16 +120,16 @@ namespace Client
        
         public void newUser(string login, bool logged)
         {
-           // MessageBox.Show("nowy"+login);
+           
             if (logged)
             {
                 Action add = new Action(() => listBox1.Items.Add(login));
-                BeginInvoke(add);
+                Invoke(add);
             }
             else
             {
                 Action add = new Action(() => listBox2.Items.Add(login));
-                BeginInvoke(add);
+                Invoke(add);
             }
         }
 
@@ -140,9 +140,9 @@ namespace Client
             {
                 
                 Action add = new Action(() => listBox1.Items.Add(login));
-                BeginInvoke(add);
+                Invoke(add);
                 Action remove = new Action(() => listBox2.Items.Remove(login));
-                BeginInvoke(remove);
+                Invoke(remove);
                
                 
             }
@@ -150,9 +150,9 @@ namespace Client
             {
 
                 Action add = new Action(() => listBox2.Items.Add(login));
-                BeginInvoke(add);
+                Invoke(add);
                 Action remove = new Action(() => listBox1.Items.Remove(login));
-                BeginInvoke(remove);
+                Invoke(remove);
              
             }
         }
@@ -160,37 +160,39 @@ namespace Client
         public void NewConversation(int id, List<string> logins)
         {
 
-            
 
+            
             if (!conversations.ContainsKey(id))
             {
                 Action createWindow = new Action(() => conversations.Add(id,new Form2(id)));
-                BeginInvoke(createWindow);
+                Invoke(createWindow);
                 //conversation.Add(new Form2(id));
                 //IntPtr handle = conversations[id].Handle;
 
                 Action newWindow = new Action(() => conversations[id].Show());
-                BeginInvoke(newWindow);
+               Invoke(newWindow);
 
                 Action newEvent = new Action(() => conversations[id].MessageSend += ClientView_MessageSend);
 
-                BeginInvoke(newEvent);
+                Invoke(newEvent);
 
                 //conversation[id].MessageSend += ClientView_MessageSend;
             }
             else
             {
                 Action newWindow = new Action(() => conversations[id].Show());
-                BeginInvoke(newWindow);
+                Invoke(newWindow);
             }
+            
         }
 
         
 
-        public void DisplayMessage(string message, int id)
+        public void DisplayMessage(string message,string author, int id)
         {
             //MessageBox.Show("wyswietlam");
-            conversations[id].DisplayMessage(message);
+            conversations[id].DisplayMessage(message,author);
+           
            
         }
 

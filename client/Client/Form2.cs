@@ -46,10 +46,10 @@ namespace Client
             textBox2.Clear();
         }
 
-        public void DisplayMessage(string message)
+        public void DisplayMessage(string message,string author)
         {
 
-            string text = "Serwer: " + message;
+            string text = author + ": "+message;
             Action<string> updateAction = new Action<string>((value) => textBox1.AppendText(value));
             textBox1.Invoke(updateAction, text);
             textBox1.Invoke(updateAction, Environment.NewLine);

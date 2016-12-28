@@ -21,10 +21,13 @@ namespace Client
     public class MessageRecievedEventArgs : EventArgs
     {
         public string Message { get; private set; }
+        public string Author { get; private set; }
         public int Id { get; private set; }
-        public MessageRecievedEventArgs(string message, int id)
+        public MessageRecievedEventArgs(string message, string author,int id)
         {
             Message = message;
+            Id = id;
+            Author = author;
         }
     }
     public class UserEventArgs : EventArgs
@@ -197,10 +200,7 @@ namespace Client
             if (recievedBuffer.Length > length.Length + Int32.Parse(length))
             {
                 recievedBuffer = recievedBuffer.Substring(length.Length + Int32.Parse(length));
-                //MessageBox.Show("zostalo coś");
-                //MessageBox.Show("caladlugosc" + recievedBuffer.Length);
-                //MessageBox.Show("cyfry" + length.Length);
-                // MessageBox.Show("reszta" + Int32.Parse(length));
+                
 
             }
             else
@@ -289,7 +289,7 @@ namespace Client
             {
                 if (item.login == login)
                 {
-                    if (item.logged = logged)
+                    if (item.logged == logged)
                         return;
                     item.logged = logged;
                     break;
@@ -330,7 +330,7 @@ namespace Client
                     break;
                 }
             }
-            //MessageBox.Show("nadano:" + index);
+           
             if (index == -1)
             {
                 var  usersList = new List<User>();
@@ -339,10 +339,10 @@ namespace Client
                     usersList.Add(findUser(item));
                 }
                 index = newConversationIndex();
-                conversations.Add(newConversationIndex(), new Conversation(usersList));
+                conversations.Add(index, new Conversation(usersList));
           
             }
-
+            Console.WriteLine("nadano"+index);
             var args = new ConversationArgs(logins, index);
             //MessageRecieved?.Invoke(this, args);
             var handler = ConversationStart;
@@ -378,6 +378,7 @@ namespace Client
                     //TODO: Obsluga wiadomosci z dwukropkiem
                     
                     list.Add(splitted[2]);
+                    
                     recievedMessage(splitted[1], list, splitted[3]);
                     break;
                 case "broadcast":
@@ -430,8 +431,9 @@ namespace Client
                 }
             }
 
+            MessageBox.Show(author);
             
-            var args = new MessageRecievedEventArgs(content, index);
+            var args = new MessageRecievedEventArgs(content,author, index);
             //MessageRecieved?.Invoke(this, args);
             var handler = MessageRecieved;
             if (handler != null)

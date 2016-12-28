@@ -36,7 +36,7 @@ namespace Client
         void NewConversation(int id, List<string>logins);
         void SetConnectionError();
         void SetConnectionSucceeded();
-        void DisplayMessage(string message,int id);
+        void DisplayMessage(string message,string author,int id);
         void newUser(string login, bool logged);
         void UserChanged(string login, bool logged);
         event EventHandler<TryToConnectEventArgs> ConnectionTry;

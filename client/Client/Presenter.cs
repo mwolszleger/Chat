@@ -47,7 +47,8 @@ namespace Client
 
         private void Model_MessageRecieved(object sender, MessageRecievedEventArgs e)
         {
-            view.DisplayMessage(e.Message,e.Id);
+           
+            view.DisplayMessage(e.Message,e.Author,e.Id);
         }
 
         private void Model_ConnectionChanged(object sender, ConnectionChangedEventArgs e)
