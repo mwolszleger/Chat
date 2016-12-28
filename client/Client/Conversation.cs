@@ -7,13 +7,25 @@ namespace Client
 {
     class Conversation
     {
-        //private List<string> users;
-        public User user;
-        public Conversation(User user)
+        public List<User> users ;
+        //public User user;
+        public Conversation(List<User> users)
         {
-            this.user = user;
+            this.users = users;
         }
-
+        public bool IsSingleConversation()
+        {
+            return users.Count == 1;
+        }
+        public bool IsTheSame(List<string> logins)
+        {
+            List<string> conversationsMembersLogins = new List<string>();
+            foreach (var item in users)
+            {
+                conversationsMembersLogins.Add(item.login);
+            }
+            return (logins.Count == conversationsMembersLogins.Count) && !logins.Except(conversationsMembersLogins).Any();
+        }
 
     }
 }

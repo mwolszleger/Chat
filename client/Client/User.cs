@@ -15,5 +15,9 @@ namespace Client
             this.login = login;
             this.logged = logged;
         }
+        public static implicit operator string(User user)
+        {
+            return user.login;
+        }
     }
 }

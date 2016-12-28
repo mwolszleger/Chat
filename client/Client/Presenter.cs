@@ -27,10 +27,10 @@ namespace Client
 
         private void Model_ConversationStart(object sender, ConversationArgs e)
         {
-            view.NewConversation(e.Id,e.Login);
+            view.NewConversation(e.Id,e.Logins);
         }
 
-        private void View_NewConversationStart(object sender, string e)
+        private void View_NewConversationStart(object sender, List<string> e)
         {
             model.NewConversationStart(e);
         }

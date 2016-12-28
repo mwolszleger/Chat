@@ -27,6 +27,8 @@ namespace Client
 
         }
 
+       
+
         private void ClientView_MessageSend(object sender, MessageSendEventArgs e)
         {
           
@@ -42,7 +44,7 @@ namespace Client
         public event EventHandler<TryToConnectEventArgs> ConnectionTry;
         public event EventHandler<EventArgs> Disconnect;
         public event EventHandler<MessageSendEventArgs> MessageSend;
-        public event EventHandler<string> NewConversationStart;
+        public event EventHandler<List<string>> NewConversationStart;
 
        
         
@@ -115,16 +117,7 @@ namespace Client
 
        
 
-        private void listBox1_DoubleClick(object sender, EventArgs e)
-        {
-            string login = listBox1.SelectedItem.ToString() ;
-            var handler = NewConversationStart;
-            if (handler != null)
-            {
-                handler(this,login);
-            }
-        }
-
+       
         public void newUser(string login, bool logged)
         {
            // MessageBox.Show("nowy"+login);
@@ -164,7 +157,7 @@ namespace Client
             }
         }
 
-        public void NewConversation(int id, string login)
+        public void NewConversation(int id, List<string> logins)
         {
 
             
@@ -201,6 +194,25 @@ namespace Client
            
         }
 
-     
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var selectedLogins = new List<string>();
+            foreach (var item in listBox1.SelectedItems)
+            {
+                selectedLogins.Add(item.ToString());
+            }
+            foreach (var item in listBox2.SelectedItems)
+            {
+                selectedLogins.Add(item.ToString());
+            }
+           
+            var handler = NewConversationStart;
+            
+            if (handler != null&&selectedLogins.Count>0)
+            {
+                handler(this,selectedLogins);
+            }
+
+        }
     }
 }
