@@ -116,7 +116,8 @@ namespace Serwer
                 {
                     _inProgress = true;
                     string tmp = "";
-                    tmp += "INSERT INTO chatdb.offlinemessages(type, author, receivers, content) VALUES (\"" +AppendLength(type + author + receiverS + content) + type + "\", \"" + author + "\", \"" + receiverS + "\", \"" + content + "\");";
+                    tmp += "INSERT INTO chatdb.offlinemessages(type, author, receivers, content) VALUES (\"" + type + "\", \"" + author + "\", \"" + receiverS + "\", \"" + content + "\");";
+                    Console.WriteLine("insert:" + type);
                     _command.CommandText = tmp;
                     _command.ExecuteNonQuery();
                     if (_reader != null)
@@ -170,7 +171,7 @@ namespace Serwer
         {
             try
             {
-                string tmp = "SELECT * FROM chatdb.offlinemessages where receiverS like \"" + login + "\" limit 1;";
+                string tmp = "SELECT * FROM chatdb.offlinemessages where receiverS like \"" + login + "%\" limit 1;";
                 string foo = "";
                 string type = "", author = "", receiverS = "", content = "";
                 _command.CommandText = tmp;

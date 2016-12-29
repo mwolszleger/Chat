@@ -19,16 +19,16 @@ namespace Serwer
         private List<string> _ordersBuff;
         #endregion
 
-        public Connection()
+        public Connection(string ip)
         {
             _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-            _serverSocket.Bind(new IPEndPoint(IPAddress.Parse("0.0.0.0"), _serverPort));
+            _serverSocket.Bind(new IPEndPoint(IPAddress.Parse(ip), _serverPort));
             _clientSockets = new List<Client>();
             _byteArray = new byte[1024];
             _myDBConnection = new DatabaseConnection();
             _ordersBuff = new List<string>();
 
-            Console.WriteLine("Serwer wystartowal...");
+            Console.WriteLine("Serwer wystartowal na ip " + ip + " ...");
         }
 
         public void HandleMessageReceivedEvent(object sender, EventArgsWithContent args)
@@ -214,7 +214,7 @@ namespace Serwer
             //[3] = content
             string[] receivers = commands[2].Split(',');
             bool success = false;
-
+            
             foreach (string item in receivers)
             {
                 if (_clientSockets.FindIndex(a => a.Name == item) != -1)
