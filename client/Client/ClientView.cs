@@ -19,7 +19,7 @@ namespace Client
         public ClientView()
         {
             InitializeComponent();
-
+            textBox4.Focus();
             //do testów
             //conversation.Add(new Form2());
             //conversation[0].Show();
@@ -40,7 +40,7 @@ namespace Client
             }
         }
 
-        private Dictionary<int,Form2> conversations = new Dictionary<int,Form2>();
+        private Dictionary<int,ConversationView> conversations = new Dictionary<int,ConversationView>();
         public event EventHandler<TryToConnectEventArgs> ConnectionTry;
         public event EventHandler<EventArgs> Disconnect;
         public event EventHandler<MessageSendEventArgs> MessageSend;
@@ -51,11 +51,24 @@ namespace Client
         public void SetConnectionSucceeded()
         {
             //Show();
-            MessageBox.Show("udalo sie");
-           // button1.Invoke((MethodInvoker)(() => { button1.Visible = true; }));
-           // button2.Invoke((MethodInvoker)(() => { button2.Visible = false; }));
+           // MessageBox.Show("udalo sie");
+            Invoke((MethodInvoker)(() => { setLogged(); }));
+           
         }
-       
+        private void setLogged()
+        {
+            label5.Text = textBox5.Text;
+            label5.Visible = true;
+            textBox4.Text = "";
+            textBox5.Text = "";
+            label1.Visible = false;
+            label2.Visible = false;
+            button3.Visible = false;
+            textBox4.Visible = false;
+            textBox5.Visible = false;
+            button2.Visible = true;
+           
+        }
 
         public void SetConnectionError()
         {
@@ -164,7 +177,7 @@ namespace Client
             
             if (!conversations.ContainsKey(id))
             {
-                Action createWindow = new Action(() => conversations.Add(id,new Form2(id)));
+                Action createWindow = new Action(() => conversations.Add(id,new ConversationView(id)));
                 Invoke(createWindow);
                 //conversation.Add(new Form2(id));
                 //IntPtr handle = conversations[id].Handle;
@@ -216,5 +229,47 @@ namespace Client
             }
 
         }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            foreach (var item in conversations)
+            {
+                item.Value.Close();
+            }
+            conversations = new Dictionary<int, ConversationView>();
+            label5.Visible =false;
+           
+            label1.Visible = true;
+            label2.Visible = true;
+            button3.Visible = true;
+            textBox4.Visible = true;
+            textBox5.Visible = true;
+            button2.Visible = false;
+            listBox1.Items.Clear();
+            listBox2.Items.Clear();
+            textBox4.Focus();
+            var handler = Disconnect;
+
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
+
+        }
+
+        private void textBox4_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                button3_Click(this,null);
+                e.Handled = true;
+            }
+        }
     }
+   
 }

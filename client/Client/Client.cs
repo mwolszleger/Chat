@@ -177,7 +177,8 @@ namespace Client
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                if(Connected)
+                    MessageBox.Show(e.Message);
             }
         }
         private void processBuffer()
@@ -232,9 +233,15 @@ namespace Client
             if (Connected)
             {
                 //serverStream.Close();
+                Connected = false;
                 clientSocket.Close();
             }
-            Connected = false;
+           
+            Logged = false;
+            conversations = new Dictionary<int, Conversation>();
+            users = new List<User>();
+            Login = "";
+            recievedBuffer = "";
 
         }
         public void sendMessage(string message)
@@ -431,7 +438,7 @@ namespace Client
                 }
             }
 
-            MessageBox.Show(author);
+            //                                                                                                                                                          MessageBox.Show(author);
             
             var args = new MessageRecievedEventArgs(content,author, index);
             //MessageRecieved?.Invoke(this, args);
