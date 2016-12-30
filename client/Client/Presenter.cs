@@ -27,10 +27,10 @@ namespace Client
 
         private void Model_ConversationStart(object sender, ConversationArgs e)
         {
-            view.NewConversation(e.Id,e.Login);
+            view.NewConversation(e.Id,e.Logins);
         }
 
-        private void View_NewConversationStart(object sender, string e)
+        private void View_NewConversationStart(object sender, List<string> e)
         {
             model.NewConversationStart(e);
         }
@@ -47,7 +47,8 @@ namespace Client
 
         private void Model_MessageRecieved(object sender, MessageRecievedEventArgs e)
         {
-            view.DisplayMessage(e.Message,e.Id);
+           
+            view.DisplayMessage(e.Message,e.Author,e.Id);
         }
 
         private void Model_ConnectionChanged(object sender, ConnectionChangedEventArgs e)

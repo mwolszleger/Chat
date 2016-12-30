@@ -33,15 +33,15 @@ namespace Client
     interface IClientView
     {
 
-        void NewConversation(int id, string login);
+        void NewConversation(int id, List<string>logins);
         void SetConnectionError();
         void SetConnectionSucceeded();
-        void DisplayMessage(string message,int id);
+        void DisplayMessage(string message,string author,int id);
         void newUser(string login, bool logged);
         void UserChanged(string login, bool logged);
         event EventHandler<TryToConnectEventArgs> ConnectionTry;
         event EventHandler<MessageSendEventArgs> MessageSend;
         event EventHandler<EventArgs> Disconnect;
-        event EventHandler<string> NewConversationStart;
+        event EventHandler<List<string>> NewConversationStart;
     }
 }
