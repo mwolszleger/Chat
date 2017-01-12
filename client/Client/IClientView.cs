@@ -20,6 +20,18 @@ namespace Client
             Password = password;
         }
     }
+    public class CreateAccountArgs : EventArgs
+    {
+        public string Login { get; private set; }
+        public string Password { get; private set; }
+        public CreateAccountArgs(string login, string password)
+        {
+            Login = login;
+            Password = password;
+
+        }
+
+    }
     public class MessageSendEventArgs : EventArgs
     {
         public string Message { get; private set; }
@@ -43,5 +55,6 @@ namespace Client
         event EventHandler<MessageSendEventArgs> MessageSend;
         event EventHandler<EventArgs> Disconnect;
         event EventHandler<List<string>> NewConversationStart;
+        event EventHandler<CreateAccountArgs> CreateAccount;
     }
 }

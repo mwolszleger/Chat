@@ -20,6 +20,7 @@ namespace Client
         {
             InitializeComponent();
             textBox4.Focus();
+            createAccountView.createAccount += CreateAccountView_createAccount;
             //do testów
             //conversation.Add(new Form2());
             //conversation[0].Show();
@@ -27,7 +28,14 @@ namespace Client
 
         }
 
-       
+        private void CreateAccountView_createAccount(object sender, CreateAccountArgs e)
+        {
+            var handler = CreateAccount;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
 
         private void ClientView_MessageSend(object sender, MessageSendEventArgs e)
         {
@@ -45,6 +53,9 @@ namespace Client
         public event EventHandler<EventArgs> Disconnect;
         public event EventHandler<MessageSendEventArgs> MessageSend;
         public event EventHandler<List<string>> NewConversationStart;
+        public event EventHandler<CreateAccountArgs> CreateAccount;
+
+        private CreateAccountView createAccountView=new CreateAccountView();
 
        
         
@@ -64,6 +75,7 @@ namespace Client
             label1.Visible = false;
             label2.Visible = false;
             button3.Visible = false;
+            button4.Visible = false;
             textBox4.Visible = false;
             textBox5.Visible = false;
             button2.Visible = true;
@@ -72,41 +84,31 @@ namespace Client
 
         public void SetConnectionError()
         {
+            clearData();
+                   
+        }
+        private void clearData()
+        {
+            foreach (var item in conversations)
+            {
+                item.Value.Close();
+            }
+            conversations = new Dictionary<int, ConversationView>();
+            label5.Visible = false;
 
-            //Show();
-            //button1.Invoke((MethodInvoker)(() => { button1.Visible = false; }));
-            //button2.Invoke((MethodInvoker)(() => { button2.Visible = true; }));
-
-            //MessageBoxButtons buttons = MessageBoxButtons.RetryCancel;
-            //string message = "Błąd połączenia z serwerem";
-            //string caption = "Błąd połączenia";
-            //DialogResult result;
-            //result = MessageBox.Show(message, caption, buttons);
-            //if (result == DialogResult.Retry)
-            //{
-            //    logIn();
-            //}
-            //if (result == DialogResult.Cancel)
-            //{
-            //    return;
-            //}        
+            label1.Visible = true;
+            label2.Visible = true;
+            button3.Visible = true;
+            button4.Visible = true;
+            textBox4.Visible = true;
+            textBox5.Visible = true;
+            button2.Visible = false;
+            listBox1.Items.Clear();
+            listBox2.Items.Clear();
+            textBox4.Focus();
         }
-      
-        private void connect()
-        {
-            
-            
-        }
-        private void logIn()
-        {
-            //Hide();
-          
-           
-        }
-        private void button2_Click(object sender, EventArgs e)
-        {
-            logIn();
-        }
+    
+        
 
         private void ClientView_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -230,29 +232,10 @@ namespace Client
 
         }
 
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
+       
         private void button2_Click_1(object sender, EventArgs e)
         {
-            foreach (var item in conversations)
-            {
-                item.Value.Close();
-            }
-            conversations = new Dictionary<int, ConversationView>();
-            label5.Visible =false;
-           
-            label1.Visible = true;
-            label2.Visible = true;
-            button3.Visible = true;
-            textBox4.Visible = true;
-            textBox5.Visible = true;
-            button2.Visible = false;
-            listBox1.Items.Clear();
-            listBox2.Items.Clear();
-            textBox4.Focus();
+            clearData();
             var handler = Disconnect;
 
             if (handler != null)
@@ -269,6 +252,11 @@ namespace Client
                 button3_Click(this,null);
                 e.Handled = true;
             }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            createAccountView.Show();
         }
     }
    

@@ -55,12 +55,10 @@ namespace Client
         {
             if (e.Connected)
             {
-                
-                view.SetConnectionSucceeded();
+               view.SetConnectionSucceeded();
             }
             else
             {
-
                 view.SetConnectionError();
             }
         }
