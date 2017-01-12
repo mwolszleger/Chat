@@ -84,8 +84,9 @@ namespace Client
 
         public void SetConnectionError()
         {
-            clearData();
-                   
+
+            Invoke((MethodInvoker)(() => { clearData(); }));
+
         }
         private void clearData()
         {

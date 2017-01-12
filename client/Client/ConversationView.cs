@@ -31,12 +31,6 @@ namespace Client
             textBox1.AppendText("Ja: " + textBox2.Text + Environment.NewLine);
             var args = new MessageSendEventArgs(textBox2.Text, id);
 
-            //#region Zmiana
-            ////tutaj chyba powinienes wysylac to do serwera
-            //Client.clientSocket.Send(System.Text.Encoding.ASCII.GetBytes("sendMsg:foo:foo:" + textBox2.Text));
-            //#endregion
-
-            //MessageSend?.Invoke(this, args);
             var handler = MessageSend;
             if (handler != null)
             {

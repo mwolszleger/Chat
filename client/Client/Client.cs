@@ -162,6 +162,7 @@ namespace Client
                 else
                 {
                     close();
+                    
                     var args = new ConnectionChangedEventArgs(false);
                     //ConnectionChanged?.Invoke(this, args);
                     var handler = ConnectionChanged;
