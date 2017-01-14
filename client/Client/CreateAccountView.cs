@@ -61,16 +61,19 @@ namespace Client
 
         public void registrationSucceded()
         {
-            label4.Text = "Rejestracja się udała";
+            
+           
             textBoxPass.Text = "";
             textBoxPass2.Text = "";
             textBoxLogin.Text = "";
+            label4.Text = "Rejestracja się udała";
             button3.Visible = false;
 
         }
 
         public void registrationFailed()
         {
+            
             label4.Text = "Rejestracja zakończona niepowodzeniem";
         }
 

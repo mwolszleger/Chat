@@ -61,6 +61,7 @@
             // textBoxPass
             // 
             this.textBoxPass.Location = new System.Drawing.Point(64, 104);
+            this.textBoxPass.MaxLength = 40;
             this.textBoxPass.Name = "textBoxPass";
             this.textBoxPass.Size = new System.Drawing.Size(160, 20);
             this.textBoxPass.TabIndex = 13;
@@ -80,6 +81,7 @@
             // textBoxLogin
             // 
             this.textBoxLogin.Location = new System.Drawing.Point(64, 60);
+            this.textBoxLogin.MaxLength = 40;
             this.textBoxLogin.Name = "textBoxLogin";
             this.textBoxLogin.Size = new System.Drawing.Size(160, 20);
             this.textBoxLogin.TabIndex = 11;
@@ -98,6 +100,7 @@
             // textBoxPass2
             // 
             this.textBoxPass2.Location = new System.Drawing.Point(64, 148);
+            this.textBoxPass2.MaxLength = 40;
             this.textBoxPass2.Name = "textBoxPass2";
             this.textBoxPass2.Size = new System.Drawing.Size(160, 20);
             this.textBoxPass2.TabIndex = 16;
@@ -118,7 +121,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.PowderBlue;
+            this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(284, 261);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);

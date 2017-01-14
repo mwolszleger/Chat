@@ -437,10 +437,10 @@ namespace Client
                     else
                         changeUser(splitted[1], false);
                     break;
-                case "registrationSuceeded":
+                case "successfulRegistration":
                     registrationResult(true);
                     break;
-                case "registrationFailed":
+                case "failToRegister":
                     registrationResult(false);
                     break;
 
