@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,6 +61,7 @@ namespace Client
         public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
         public event EventHandler<UserEventArgs> NewUser;
         public event EventHandler<UserEventArgs> ChangedUser;
+        public event EventHandler<bool> RegistrationResult;
         public event EventHandler<ConversationArgs> ConversationStart;
         private bool Connected = false;
         private bool Logged = false;
@@ -66,22 +69,41 @@ namespace Client
 
         private string recievedBuffer = "";
 
-       
-        //zmien pozniej na prywatny i zeby nie byl statyczny
-        public Socket clientSocket;
-       
+
+
+        private Socket clientSocket;
+
 
 
         private NetworkStream serverStream = default(NetworkStream);
 
         private List<User> users = new List<User>();
-        //private List<Conversation> conversations = new List<Conversation>();
+
         private Dictionary<int, Conversation> conversations = new Dictionary<int, Conversation>();
-     
+
         private byte[] _buffer;
-     
-        public void connectToServer(String ip, int port, string login, string password)
+        public void startConnection()
         {
+            if (Connected)
+               return;
+            int port;
+            string ip;
+            try
+            {
+                using (StreamReader sr = new StreamReader("ip.txt"))
+                {
+                    ip = sr.ReadLine();
+                    port = Convert.ToInt32(sr.ReadLine());
+
+                }
+            }
+            catch (Exception)
+            {
+
+                ip = "127.0.0.1";
+                port = 1024;
+            }
+         
             try
             {
                 _buffer = new byte[1024];
@@ -90,28 +112,16 @@ namespace Client
                 clientSocket.Connect(ip, port);
                 serverStream = default(NetworkStream);
                 Connected = true;
-
-
-                #region Zmiana
-
-                sendMessage("login:" + login + ":" + password);
-
-                //rozpoczyna asynchroniczne nasluchiwanie serwera (bez robienia dodatkowego watku, to druga opcja, ale wtedy
-                //synchronicznie sluchasz)
+                
                 BeginReceive();
-                #endregion
-
-
-
-                Login = login;
-
-
+               
             }
             catch (Exception)
             {
 
 
                 Connected = false;
+                Logged = false;
                 var args = new ConnectionChangedEventArgs(false);
                 //ConnectionChanged?.Invoke(this, args);
                 var handler = ConnectionChanged;
@@ -123,9 +133,12 @@ namespace Client
 
         }
 
-
-   
-
+        public void connectToServer(string login, string password)
+        {
+            startConnection();
+            sendMessage("login:" + login + ":" + computeHash(password));
+        }
+        
         public void BeginReceive()
         {
             try
@@ -146,25 +159,17 @@ namespace Client
                 if (!(mySock.Poll(1000, SelectMode.SelectRead) && mySock.Available == 0))
                 {
 
-
-                    //this.FireMessageReceivedEvent(CreateStringFromByteArray(_buffer));
-
-                    //tutaj faktycznie odbierasz jakas wiadomosc
-                    int count = _buffer.Count(bt => bt != 0); // find the first null
+                    int count = _buffer.Count(bt => bt != 0);
                     string message = Encoding.ASCII.GetString(_buffer, 0, count);
                     processMessage(message);
-
-                    // MessageBox.Show(ASCIIEncoding.ASCII.GetString(_buffer));
-
                     Array.Clear(_buffer, 0, _buffer.Length);
                     BeginReceive();
                 }
                 else
                 {
                     close();
-                    
+
                     var args = new ConnectionChangedEventArgs(false);
-                    //ConnectionChanged?.Invoke(this, args);
                     var handler = ConnectionChanged;
                     if (handler != null)
                     {
@@ -192,7 +197,7 @@ namespace Client
             if (recievedBuffer.Length >= length.Length + Int32.Parse(length))
             {
                 processOrder(recievedBuffer.Substring(length.Length, Int32.Parse(length)));
-               
+
             }
             else
                 return;
@@ -207,7 +212,7 @@ namespace Client
                 recievedBuffer = "";
                 //MessageBox.Show("nic");
             }
-            
+
             if (recievedBuffer != "")
                 processBuffer();
         }
@@ -222,7 +227,7 @@ namespace Client
 
         }
 
-         public void close()
+        public void close()
         {
 
             if (Connected)
@@ -256,7 +261,10 @@ namespace Client
         }
         public void registerUser(string login, string password)
         {
-            sendMessage("register:"+login+":"+password);
+            MessageBox.Show("dd");
+            startConnection();
+           
+            sendMessage("register:" + login + ":" + computeHash(password));
         }
         public void SendTextMessage(string message, int id)
         {
@@ -281,6 +289,8 @@ namespace Client
         }
         private void newUser(string login, bool logged)
         {
+            if (login == Login)
+                return;
             users.Add(new User(login, logged));
             var args = new UserEventArgs(login, logged);
             //ConnectionChanged?.Invoke(this, args);
@@ -292,6 +302,8 @@ namespace Client
         }
         public void changeUser(string login, bool logged)
         {
+            if (login == Login)
+                return;
             foreach (var item in users)
             {
                 if (item.login == login)
@@ -423,11 +435,30 @@ namespace Client
                     else
                         changeUser(splitted[1], false);
                     break;
+                case "registrationSuceeded":
+                    registrationResult(true);
+                    break;
+                case "registrationFailed":
+                    registrationResult(false);
+                    break;
+
+
                 default:
                     break;
             }
 
 
+        }
+
+        private void registrationResult(bool v)
+        {
+           
+            //ConnectionChanged?.Invoke(this, args);
+            var handler = RegistrationResult;
+            if (handler != null)
+            {
+                handler(this, v);
+            }
         }
 
         private void recievedMessage(string author, List<string> reciever, string content)
@@ -486,6 +517,12 @@ namespace Client
 
             }
             return null;
+        }
+        private string computeHash(string password)
+        {
+            var alghorithm = SHA512.Create();
+            var result = alghorithm.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Encoding.UTF8.GetString(result);
         }
 
     }

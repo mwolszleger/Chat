@@ -40,7 +40,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(64, 190);
+            this.button3.Location = new System.Drawing.Point(64, 187);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(160, 23);
             this.button3.TabIndex = 15;
@@ -65,6 +65,7 @@
             this.textBoxPass.Size = new System.Drawing.Size(160, 20);
             this.textBoxPass.TabIndex = 13;
             this.textBoxPass.UseSystemPasswordChar = true;
+            this.textBoxPass.TextChanged += new System.EventHandler(this.textBoxPass_TextChanged);
             // 
             // label1
             // 
@@ -82,6 +83,7 @@
             this.textBoxLogin.Name = "textBoxLogin";
             this.textBoxLogin.Size = new System.Drawing.Size(160, 20);
             this.textBoxLogin.TabIndex = 11;
+            this.textBoxLogin.TextChanged += new System.EventHandler(this.textBoxLogin_TextChanged);
             // 
             // label3
             // 
@@ -100,13 +102,15 @@
             this.textBoxPass2.Size = new System.Drawing.Size(160, 20);
             this.textBoxPass2.TabIndex = 16;
             this.textBoxPass2.UseSystemPasswordChar = true;
+            this.textBoxPass2.TextChanged += new System.EventHandler(this.textBoxPass2_TextChanged);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(64, 220);
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label4.Location = new System.Drawing.Point(61, 226);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(57, 13);
+            this.label4.Size = new System.Drawing.Size(79, 16);
             this.label4.TabIndex = 18;
             this.label4.Text = "Komunikat";
             // 

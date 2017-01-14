@@ -15,15 +15,12 @@ namespace Client
 
         public event EventHandler<MessageSendEventArgs> MessageSend;
         private int id;
+        private List<string> Logins;
         public ConversationView()
         {
             InitializeComponent();
         }
-        public void appendMessage(string message)
-        {
-            
-        }
-
+        
         private void button1_Click(object sender, EventArgs e)
         {
             if (textBox2.Text == "")
@@ -48,9 +45,16 @@ namespace Client
             textBox1.Invoke(updateAction, text);
             textBox1.Invoke(updateAction, Environment.NewLine);
         }
-        public ConversationView(int id):this()
+        public ConversationView(int id,List<string>logins):this()
         {
             this.id = id;
+            this.Logins = logins;
+            for (int i = 0; i < Logins.Count; i++)
+            {
+                label1.Text += Logins[i];
+                if (i != Logins.Count - 1)
+                    label1.Text += ", ";
+            }
         }
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)

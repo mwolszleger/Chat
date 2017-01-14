@@ -12,10 +12,9 @@ namespace Client
         public int Port { get; private set; }
         public string Login { get; private set; }
         public string Password { get; private set; }
-        public TryToConnectEventArgs(string ip,int port,string login,string password)
+        public TryToConnectEventArgs(string login,string password)
         {
-            Ip = ip;
-            Port = port;
+           
             Login = login;
             Password = password;
         }
@@ -51,6 +50,8 @@ namespace Client
         void DisplayMessage(string message,string author,int id);
         void newUser(string login, bool logged);
         void UserChanged(string login, bool logged);
+        void RegistrationResult(bool e);
+
         event EventHandler<TryToConnectEventArgs> ConnectionTry;
         event EventHandler<MessageSendEventArgs> MessageSend;
         event EventHandler<EventArgs> Disconnect;

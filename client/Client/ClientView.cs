@@ -30,6 +30,7 @@ namespace Client
 
         private void CreateAccountView_createAccount(object sender, CreateAccountArgs e)
         {
+            
             var handler = CreateAccount;
             if (handler != null)
             {
@@ -123,7 +124,7 @@ namespace Client
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var args = new TryToConnectEventArgs("127.0.0.1", 1024, textBox5.Text, textBox4.Text);
+            var args = new TryToConnectEventArgs( textBox5.Text, textBox4.Text);
             var handler = ConnectionTry;
             if (handler != null)
             {
@@ -180,7 +181,7 @@ namespace Client
             
             if (!conversations.ContainsKey(id))
             {
-                Action createWindow = new Action(() => conversations.Add(id,new ConversationView(id)));
+                Action createWindow = new Action(() => conversations.Add(id,new ConversationView(id,logins)));
                 Invoke(createWindow);
                 //conversation.Add(new Form2(id));
                 //IntPtr handle = conversations[id].Handle;
@@ -258,6 +259,18 @@ namespace Client
         private void button4_Click(object sender, EventArgs e)
         {
             createAccountView.Show();
+        }
+
+        public void RegistrationResult(bool e)
+        {
+            if (e)
+            {
+                Invoke((MethodInvoker)(() => { createAccountView.registrationSucceded(); }));
+            }
+            else
+            {
+                Invoke((MethodInvoker)(() => { createAccountView.registrationFailed(); }));
+            }
         }
     }
    
