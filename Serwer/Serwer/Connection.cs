@@ -39,6 +39,7 @@ namespace Serwer
                 int count = _ordersBuff.Count;
                 for (int i = 0; i < count;i++)
                 {
+                    Console.WriteLine(_ordersBuff[0]);
                     this.HandleOrder(_ordersBuff[0], ((Client)sender).ClientSocket);
                     _ordersBuff.RemoveAt(0);
                 }                            
@@ -247,6 +248,7 @@ namespace Serwer
             //informs about success
             this.InformSomebody("logged", client);
             this.InformAboutLoggedUsers(client);
+            this.InformAboutNotLoggedUsers(client);
             //send offline messages to him
             
             while(true)
@@ -254,7 +256,7 @@ namespace Serwer
                 tmp = _myDBConnection.GetOfflineMessage(nick);
                 if (tmp != "")
                 {
-                    client.Send(CreateByteArray(tmp));
+                    client.Send(CreateByteArray(AppendLength(tmp)));
                     deleteArray = SplitOrder(tmp);                 
                     _myDBConnection.DeleteOfflineMessage(deleteArray[0], deleteArray[1], deleteArray[2], deleteArray[3]);
                 }
@@ -276,6 +278,7 @@ namespace Serwer
                 return null;
             }
             _myDBConnection.InsertUser(nick);//, splitedOrder[2]);
+            client.Send(CreateByteArray(AppendLength("successfulRegistration")));
             return this.Login(nick, client);
         }
 
@@ -300,15 +303,24 @@ namespace Serwer
                     InformSomebody("logged:" + cl.Name, loggedClient);
         }
 
+        private void InformAboutNotLoggedUsers(Socket loggedClient)
+        {
+            foreach(string user in _myDBConnection.GetUsers())
+            {
+                if (!_clientSockets.Where(x => x.Name==user).Any())
+                    InformSomebody("loggedOut:" + user, loggedClient);
+            }
+        }
+
         #region Methods to simplify
         private static string CreateStringFromByteArray(byte[] byteArr)
         {
-            return ASCIIEncoding.ASCII.GetString(byteArr).TrimEnd(new char[] { (char)0 });
+            return Encoding.UTF8.GetString(byteArr).TrimEnd(new char[] { (char)0 });
         }
 
         private static byte[] CreateByteArray(string str)
         {
-            return System.Text.Encoding.ASCII.GetBytes(str);
+            return Encoding.UTF8.GetBytes(str);
         }
 
         private string[] SplitOrder(string order)

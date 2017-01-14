@@ -105,6 +105,31 @@ namespace Serwer
                 _reader.Close();
             }
         }
+        public List<string> GetUsers()
+        {
+            try
+            {
+                string tmp = "SELECT login FROM chatdb.users";
+                List<string> users = new List<string>();
+                _command.CommandText = tmp;
+                _reader = _command.ExecuteReader();
+                while (_reader.Read())
+                {
+                    users.Add(_reader.GetString(0));               
+                }
+                return users;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return new List<string>();
+            }
+            finally
+            {
+                _reader.Close();
+            }
+            
+        }
 
         #region OfflineMessage Methods
         public bool InsertOfflineMessage(string type, string author, string receiverS, string content)
