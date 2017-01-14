@@ -84,6 +84,7 @@ namespace Client
         private byte[] _buffer;
         public void startConnection()
         {
+           
             if (Connected)
                return;
             int port;
@@ -137,6 +138,7 @@ namespace Client
         {
             startConnection();
             sendMessage("login:" + login + ":" + computeHash(password));
+            Login = login;
         }
         
         public void BeginReceive()
@@ -261,7 +263,7 @@ namespace Client
         }
         public void registerUser(string login, string password)
         {
-            MessageBox.Show("dd");
+            
             startConnection();
            
             sendMessage("register:" + login + ":" + computeHash(password));
@@ -520,9 +522,9 @@ namespace Client
         }
         private string computeHash(string password)
         {
-            var alghorithm = SHA512.Create();
+            var alghorithm = SHA256.Create();
             var result = alghorithm.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return Encoding.UTF8.GetString(result);
+            return Convert.ToBase64String(result);
         }
 
     }
