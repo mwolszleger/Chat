@@ -69,9 +69,8 @@
             this.label1.Font = new System.Drawing.Font("Arial Narrow", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.label1.Location = new System.Drawing.Point(22, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 16);
+            this.label1.Size = new System.Drawing.Size(0, 16);
             this.label1.TabIndex = 9;
-            this.label1.Text = "aaa, ddeec";
             // 
             // ConversationView
             // 

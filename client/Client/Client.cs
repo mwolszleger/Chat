@@ -162,7 +162,7 @@ namespace Client
                 {
 
                     int count = _buffer.Count(bt => bt != 0);
-                    string message = Encoding.ASCII.GetString(_buffer, 0, count);
+                    string message = Encoding.UTF8.GetString(_buffer, 0, count);
                     processMessage(message);
                     Array.Clear(_buffer, 0, _buffer.Length);
                     BeginReceive();
@@ -252,7 +252,7 @@ namespace Client
             try
             {
 
-                clientSocket.Send(System.Text.Encoding.ASCII.GetBytes(message.Length + message));
+                clientSocket.Send(System.Text.Encoding.UTF8.GetBytes(message.Length + message));
 
                 Console.WriteLine("wyslano:" + message.Length + message);
             }

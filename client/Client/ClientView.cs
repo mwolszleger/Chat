@@ -272,6 +272,36 @@ namespace Client
                 Invoke((MethodInvoker)(() => { createAccountView.registrationFailed(); }));
             }
         }
+
+        private void listBox1_DoubleClick(object sender, EventArgs e)
+        {
+            var selectedLogins = new List<string>();
+            foreach (var item in listBox1.SelectedItems)
+            {
+                selectedLogins.Add(item.ToString());
+            }
+            var handler = NewConversationStart;
+
+            if (handler != null && selectedLogins.Count ==1 )
+            {
+                handler(this, selectedLogins);
+            }
+        }
+
+        private void listBox2_DoubleClick(object sender, EventArgs e)
+        {
+            var selectedLogins = new List<string>();
+            foreach (var item in listBox2.SelectedItems)
+            {
+                selectedLogins.Add(item.ToString());
+            }
+            var handler = NewConversationStart;
+
+            if (handler != null && selectedLogins.Count == 1)
+            {
+                handler(this, selectedLogins);
+            }
+        }
     }
    
 }
