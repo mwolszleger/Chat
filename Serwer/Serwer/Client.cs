@@ -105,26 +105,9 @@ namespace Serwer
         #region StaticMethods
         private static string CreateStringFromByteArray(byte[] byteArr)
         {
-            return ASCIIEncoding.ASCII.GetString(byteArr);
+            return Encoding.UTF8.GetString(byteArr);
         }
 
-
-        /*private static byte[] CreateByteArray(string str)
-            {
-                return System.Text.Encoding.ASCII.GetBytes(str);
-            }*/
-
-        /* private static byte[] ConcatenateByteArrays(List<byte[]> listOfBytes)
-         {
-             byte[] concatenation = new byte[listOfBytes.Sum(item => item.Length)];
-             int leng = 0;
-             foreach(byte[] array in listOfBytes)
-             {
-                 System.Buffer.BlockCopy(array, 0, concatenation, leng, array.Length);
-                 leng += array.Length;
-             }
-             return concatenation;
-         }*/
         #endregion
 
         #endregion
