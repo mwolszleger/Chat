@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +25,7 @@ namespace Client
         public string Message { get; private set; }
         public string Author { get; private set; }
         public int Id { get; private set; }
-        public MessageRecievedEventArgs(string message, string author,int id)
+        public MessageRecievedEventArgs(string message, string author, int id)
         {
             Message = message;
             Id = id;
@@ -59,6 +61,7 @@ namespace Client
         public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
         public event EventHandler<UserEventArgs> NewUser;
         public event EventHandler<UserEventArgs> ChangedUser;
+        public event EventHandler<bool> RegistrationResult;
         public event EventHandler<ConversationArgs> ConversationStart;
         private bool Connected = false;
         private bool Logged = false;
@@ -66,22 +69,41 @@ namespace Client
 
         private string recievedBuffer = "";
 
-        #region Zmiana
-        //zmien pozniej na prywatny i zeby nie byl statyczny
-        public static Socket clientSocket;
-        #endregion
+
+
+        private Socket clientSocket;
+
 
 
         private NetworkStream serverStream = default(NetworkStream);
 
         private List<User> users = new List<User>();
-        //private List<Conversation> conversations = new List<Conversation>();
+
         private Dictionary<int, Conversation> conversations = new Dictionary<int, Conversation>();
-        #region Tymczasowy bufer
+
         private byte[] _buffer;
-        #endregion
-        public void connectToServer(String ip, int port, string login, string password)
+        public void startConnection()
         {
+            if (Connected)
+               return;
+            int port;
+            string ip;
+            try
+            {
+                using (StreamReader sr = new StreamReader("ip.txt"))
+                {
+                    ip = sr.ReadLine();
+                    port = Convert.ToInt32(sr.ReadLine());
+
+                }
+            }
+            catch (Exception)
+            {
+
+                ip = "127.0.0.1";
+                port = 1024;
+            }
+         
             try
             {
                 _buffer = new byte[1024];
@@ -90,38 +112,16 @@ namespace Client
                 clientSocket.Connect(ip, port);
                 serverStream = default(NetworkStream);
                 Connected = true;
-
-
-                #region Zmiana
-
-                sendMessage("login:" + login + ":" + password);
-
-                //rozpoczyna asynchroniczne nasluchiwanie serwera (bez robienia dodatkowego watku, to druga opcja, ale wtedy
-                //synchronicznie sluchasz)
+                
                 BeginReceive();
-                #endregion
-
-
-
-                Login = login;
-
-
-
-
-
-                //tymczasowo
-                newUser("t1", true);
-                newUser("testniezalogowany1", false);
-                newUser("t2", true);
-
-                newUser("t3", true);
-
+               
             }
             catch (Exception)
             {
 
 
                 Connected = false;
+                Logged = false;
                 var args = new ConnectionChangedEventArgs(false);
                 //ConnectionChanged?.Invoke(this, args);
                 var handler = ConnectionChanged;
@@ -133,9 +133,12 @@ namespace Client
 
         }
 
-
-        #region Client Socket Receive Methods
-
+        public void connectToServer(string login, string password)
+        {
+            startConnection();
+            sendMessage("login:" + login + ":" + computeHash(password));
+        }
+        
         public void BeginReceive()
         {
             try
@@ -156,28 +159,28 @@ namespace Client
                 if (!(mySock.Poll(1000, SelectMode.SelectRead) && mySock.Available == 0))
                 {
 
-
-                    //this.FireMessageReceivedEvent(CreateStringFromByteArray(_buffer));
-
-                    //tutaj faktycznie odbierasz jakas wiadomosc
-                    int count = _buffer.Count(bt => bt != 0); // find the first null
+                    int count = _buffer.Count(bt => bt != 0);
                     string message = Encoding.ASCII.GetString(_buffer, 0, count);
                     processMessage(message);
-
-                    // MessageBox.Show(ASCIIEncoding.ASCII.GetString(_buffer));
-
                     Array.Clear(_buffer, 0, _buffer.Length);
                     BeginReceive();
                 }
                 else
                 {
-                    Console.WriteLine("Stracono polaczenie z ");
-                    //FireDisconnectedEvent(myClient.Name);
+                    close();
+
+                    var args = new ConnectionChangedEventArgs(false);
+                    var handler = ConnectionChanged;
+                    if (handler != null)
+                    {
+                        handler(this, args);
+                    }
+
                 }
             }
             catch (Exception e)
             {
-                if(Connected)
+                if (Connected)
                     MessageBox.Show(e.Message);
             }
         }
@@ -194,14 +197,14 @@ namespace Client
             if (recievedBuffer.Length >= length.Length + Int32.Parse(length))
             {
                 processOrder(recievedBuffer.Substring(length.Length, Int32.Parse(length)));
-                //MessageBox.Show("doprzetw"+ message.Substring(length.Length, Int32.Parse(length)));
+
             }
             else
                 return;
             if (recievedBuffer.Length > length.Length + Int32.Parse(length))
             {
                 recievedBuffer = recievedBuffer.Substring(length.Length + Int32.Parse(length));
-                
+
 
             }
             else
@@ -209,7 +212,7 @@ namespace Client
                 recievedBuffer = "";
                 //MessageBox.Show("nic");
             }
-            //MessageBox.Show("zostalo"+recievedBuffer);
+
             if (recievedBuffer != "")
                 processBuffer();
         }
@@ -224,9 +227,6 @@ namespace Client
 
         }
 
-        #endregion
-
-
         public void close()
         {
 
@@ -236,7 +236,7 @@ namespace Client
                 Connected = false;
                 clientSocket.Close();
             }
-           
+
             Logged = false;
             conversations = new Dictionary<int, Conversation>();
             users = new List<User>();
@@ -247,7 +247,8 @@ namespace Client
         public void sendMessage(string message)
         {
 
-            try            {
+            try
+            {
 
                 clientSocket.Send(System.Text.Encoding.ASCII.GetBytes(message.Length + message));
 
@@ -258,18 +259,25 @@ namespace Client
                 Connected = false;
             }
         }
+        public void registerUser(string login, string password)
+        {
+            MessageBox.Show("dd");
+            startConnection();
+           
+            sendMessage("register:" + login + ":" + computeHash(password));
+        }
         public void SendTextMessage(string message, int id)
         {
             string msg;
             if (conversations[id].IsSingleConversation())
             {
                 msg = "sendMsg:" + Login + ":" + conversations[id].users[0].login + ":" + message;
-               
+
             }
             else
             {
                 msg = "broadcast:" + Login + ":";
-                for (int i = 0; i < conversations[id].users.Count-1; i++)
+                for (int i = 0; i < conversations[id].users.Count - 1; i++)
                 {
                     msg += conversations[id].users[i].login + ",";
                 }
@@ -281,6 +289,8 @@ namespace Client
         }
         private void newUser(string login, bool logged)
         {
+            if (login == Login)
+                return;
             users.Add(new User(login, logged));
             var args = new UserEventArgs(login, logged);
             //ConnectionChanged?.Invoke(this, args);
@@ -292,6 +302,8 @@ namespace Client
         }
         public void changeUser(string login, bool logged)
         {
+            if (login == Login)
+                return;
             foreach (var item in users)
             {
                 if (item.login == login)
@@ -323,33 +335,33 @@ namespace Client
         }
 
 
-        public void NewConversationStart(List<string>logins)
+        public void NewConversationStart(List<string> logins)
         {
 
             int index = -1;
-           
+
             foreach (var item in conversations)
             {
-               
+
                 if (item.Value.IsTheSame(logins))
                 {
                     index = item.Key;
                     break;
                 }
             }
-           
+
             if (index == -1)
             {
-                var  usersList = new List<User>();
+                var usersList = new List<User>();
                 foreach (var item in logins)
                 {
                     usersList.Add(findUser(item));
                 }
                 index = newConversationIndex();
                 conversations.Add(index, new Conversation(usersList));
-          
+
             }
-            Console.WriteLine("nadano"+index);
+            Console.WriteLine("nadano" + index);
             var args = new ConversationArgs(logins, index);
             //MessageRecieved?.Invoke(this, args);
             var handler = ConversationStart;
@@ -377,27 +389,34 @@ namespace Client
 
             }
             var splitted = message.Split(':');
+            if (splitted.Length > 4)
+            {
+                for (int i = 4; i < splitted.Length; i++)
+                {
+                    splitted[3] += ":";
+                    splitted[3] += splitted[i];
+                }
+            }
             var list = new List<string>();
             switch (splitted[0])
             {
                 case "sendMsg":
 
-                    //TODO: Obsluga wiadomosci z dwukropkiem
-                    
+
                     list.Add(splitted[2]);
-                    
+
                     recievedMessage(splitted[1], list, splitted[3]);
                     break;
                 case "broadcast":
-                    
+
                     var recievers = splitted[2].Split(',');
-                    var reciewersList=recievers.ToList<string>();
-                    for (int i = 0; i < reciewersList.Count; i++)
+                    var recieversList = recievers.ToList<string>();
+                    for (int i = 0; i < recieversList.Count; i++)
                     {
-                        reciewersList[i] = reciewersList[i].Replace(" ","");
+                        recieversList[i] = recieversList[i].Replace(" ", "");
 
                     }
-                    recievedMessage(splitted[1], reciewersList, splitted[3]);
+                    recievedMessage(splitted[1], recieversList, splitted[3]);
                     break;
                 case "logged":
                     int id = findUserId(splitted[1]);
@@ -416,11 +435,30 @@ namespace Client
                     else
                         changeUser(splitted[1], false);
                     break;
+                case "registrationSuceeded":
+                    registrationResult(true);
+                    break;
+                case "registrationFailed":
+                    registrationResult(false);
+                    break;
+
+
                 default:
                     break;
             }
 
 
+        }
+
+        private void registrationResult(bool v)
+        {
+           
+            //ConnectionChanged?.Invoke(this, args);
+            var handler = RegistrationResult;
+            if (handler != null)
+            {
+                handler(this, v);
+            }
         }
 
         private void recievedMessage(string author, List<string> reciever, string content)
@@ -439,8 +477,8 @@ namespace Client
             }
 
             //                                                                                                                                                          MessageBox.Show(author);
-            
-            var args = new MessageRecievedEventArgs(content,author, index);
+
+            var args = new MessageRecievedEventArgs(content, author, index);
             //MessageRecieved?.Invoke(this, args);
             var handler = MessageRecieved;
             if (handler != null)
@@ -469,16 +507,22 @@ namespace Client
             }
             return -1;
         }
-       
+
         private User findUser(string login)
         {
             foreach (var item in users)
             {
                 if (item.login == login)
                     return item;
-                
+
             }
             return null;
+        }
+        private string computeHash(string password)
+        {
+            var alghorithm = SHA512.Create();
+            var result = alghorithm.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return Encoding.UTF8.GetString(result);
         }
 
     }
