@@ -40,6 +40,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.button4 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button3
@@ -136,7 +137,6 @@
             this.label3.Size = new System.Drawing.Size(164, 15);
             this.label3.TabIndex = 15;
             this.label3.Text = "Zalogowani użytkownicy:";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // label4
             // 
@@ -159,12 +159,23 @@
             this.label5.Text = "login";
             this.label5.Visible = false;
             // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(333, 240);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(160, 23);
+            this.button4.TabIndex = 18;
+            this.button4.Text = "zarejestruj";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // ClientView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.PowderBlue;
             this.ClientSize = new System.Drawing.Size(538, 352);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -200,6 +211,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button button4;
     }
 }
 

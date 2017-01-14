@@ -20,6 +20,7 @@ namespace Client
         {
             InitializeComponent();
             textBox4.Focus();
+            createAccountView.createAccount += CreateAccountView_createAccount;
             //do testów
             //conversation.Add(new Form2());
             //conversation[0].Show();
@@ -27,7 +28,15 @@ namespace Client
 
         }
 
-       
+        private void CreateAccountView_createAccount(object sender, CreateAccountArgs e)
+        {
+            
+            var handler = CreateAccount;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
 
         private void ClientView_MessageSend(object sender, MessageSendEventArgs e)
         {
@@ -45,6 +54,9 @@ namespace Client
         public event EventHandler<EventArgs> Disconnect;
         public event EventHandler<MessageSendEventArgs> MessageSend;
         public event EventHandler<List<string>> NewConversationStart;
+        public event EventHandler<CreateAccountArgs> CreateAccount;
+
+        private CreateAccountView createAccountView=new CreateAccountView();
 
        
         
@@ -64,6 +76,7 @@ namespace Client
             label1.Visible = false;
             label2.Visible = false;
             button3.Visible = false;
+            button4.Visible = false;
             textBox4.Visible = false;
             textBox5.Visible = false;
             button2.Visible = true;
@@ -73,40 +86,31 @@ namespace Client
         public void SetConnectionError()
         {
 
-            //Show();
-            //button1.Invoke((MethodInvoker)(() => { button1.Visible = false; }));
-            //button2.Invoke((MethodInvoker)(() => { button2.Visible = true; }));
+            Invoke((MethodInvoker)(() => { clearData(); }));
 
-            //MessageBoxButtons buttons = MessageBoxButtons.RetryCancel;
-            //string message = "Błąd połączenia z serwerem";
-            //string caption = "Błąd połączenia";
-            //DialogResult result;
-            //result = MessageBox.Show(message, caption, buttons);
-            //if (result == DialogResult.Retry)
-            //{
-            //    logIn();
-            //}
-            //if (result == DialogResult.Cancel)
-            //{
-            //    return;
-            //}        
         }
-      
-        private void connect()
+        private void clearData()
         {
-            
-            
+            foreach (var item in conversations)
+            {
+                item.Value.Close();
+            }
+            conversations = new Dictionary<int, ConversationView>();
+            label5.Visible = false;
+
+            label1.Visible = true;
+            label2.Visible = true;
+            button3.Visible = true;
+            button4.Visible = true;
+            textBox4.Visible = true;
+            textBox5.Visible = true;
+            button2.Visible = false;
+            listBox1.Items.Clear();
+            listBox2.Items.Clear();
+            textBox4.Focus();
         }
-        private void logIn()
-        {
-            //Hide();
-          
-           
-        }
-        private void button2_Click(object sender, EventArgs e)
-        {
-            logIn();
-        }
+    
+        
 
         private void ClientView_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -120,7 +124,7 @@ namespace Client
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var args = new TryToConnectEventArgs("127.0.0.1", 1024, textBox5.Text, textBox4.Text);
+            var args = new TryToConnectEventArgs( textBox5.Text, textBox4.Text);
             var handler = ConnectionTry;
             if (handler != null)
             {
@@ -177,7 +181,7 @@ namespace Client
             
             if (!conversations.ContainsKey(id))
             {
-                Action createWindow = new Action(() => conversations.Add(id,new ConversationView(id)));
+                Action createWindow = new Action(() => conversations.Add(id,new ConversationView(id,logins)));
                 Invoke(createWindow);
                 //conversation.Add(new Form2(id));
                 //IntPtr handle = conversations[id].Handle;
@@ -230,29 +234,10 @@ namespace Client
 
         }
 
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
+       
         private void button2_Click_1(object sender, EventArgs e)
         {
-            foreach (var item in conversations)
-            {
-                item.Value.Close();
-            }
-            conversations = new Dictionary<int, ConversationView>();
-            label5.Visible =false;
-           
-            label1.Visible = true;
-            label2.Visible = true;
-            button3.Visible = true;
-            textBox4.Visible = true;
-            textBox5.Visible = true;
-            button2.Visible = false;
-            listBox1.Items.Clear();
-            listBox2.Items.Clear();
-            textBox4.Focus();
+            clearData();
             var handler = Disconnect;
 
             if (handler != null)
@@ -268,6 +253,23 @@ namespace Client
             {
                 button3_Click(this,null);
                 e.Handled = true;
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            createAccountView.Show();
+        }
+
+        public void RegistrationResult(bool e)
+        {
+            if (e)
+            {
+                Invoke((MethodInvoker)(() => { createAccountView.registrationSucceded(); }));
+            }
+            else
+            {
+                Invoke((MethodInvoker)(() => { createAccountView.registrationFailed(); }));
             }
         }
     }
