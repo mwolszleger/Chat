@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Client
+﻿namespace Client
 {
     class User
     {
@@ -15,9 +9,6 @@ namespace Client
             this.login = login;
             this.logged = logged;
         }
-        public static implicit operator string(User user)
-        {
-            return user.login;
-        }
+       
     }
 }

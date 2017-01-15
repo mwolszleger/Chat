@@ -12,140 +12,49 @@ using System.Windows.Forms;
 
 namespace Client
 {
-    public partial class ClientView : Form,IClientView
+    public partial class ClientView : Form, IClientView
     {
-
-     
-        public ClientView()
-        {
-            InitializeComponent();
-            textBox4.Focus();
-            createAccountView.createAccount += CreateAccountView_createAccount;
-            //do testów
-            //conversation.Add(new Form2());
-            //conversation[0].Show();
-            //conversation[0].MessageSend += ClientView_MessageSend;
-
-        }
-
-        private void CreateAccountView_createAccount(object sender, CreateAccountArgs e)
-        {
-            
-            var handler = CreateAccount;
-            if (handler != null)
-            {
-                handler(this, e);
-            }
-        }
-
-        private void ClientView_MessageSend(object sender, MessageSendEventArgs e)
-        {
-          
-            //MessageSend?.Invoke(this, args);
-            var handler = MessageSend;
-            if (handler != null)
-            {
-                handler(this,e);
-            }
-        }
-
-        private Dictionary<int,ConversationView> conversations = new Dictionary<int,ConversationView>();
         public event EventHandler<TryToConnectEventArgs> ConnectionTry;
         public event EventHandler<EventArgs> Disconnect;
         public event EventHandler<MessageSendEventArgs> MessageSend;
         public event EventHandler<List<string>> NewConversationStart;
         public event EventHandler<CreateAccountArgs> CreateAccount;
 
-        private CreateAccountView createAccountView=new CreateAccountView();
+        private CreateAccountView createAccountView = new CreateAccountView();
+        private Dictionary<int, ConversationView> conversations = new Dictionary<int, ConversationView>();
 
-       
-        
+        public ClientView()
+        {
+            InitializeComponent();
+            textBoxPassword.Focus();
+            createAccountView.createAccount += CreateAccountView_createAccount;
+
+        }
         public void SetConnectionSucceeded()
         {
-            //Show();
-           // MessageBox.Show("udalo sie");
-            Invoke((MethodInvoker)(() => { setLogged(); }));
-           
+
+            Invoke((MethodInvoker)(() => { SetLogged(); }));
+
         }
-        private void setLogged()
-        {
-            label5.Text = textBox5.Text;
-            label5.Visible = true;
-            textBox4.Text = "";
-            textBox5.Text = "";
-            label1.Visible = false;
-            label2.Visible = false;
-            button3.Visible = false;
-            button4.Visible = false;
-            textBox4.Visible = false;
-            textBox5.Visible = false;
-            button2.Visible = true;
-           
-        }
+
 
         public void SetConnectionError()
         {
 
-            Invoke((MethodInvoker)(() => { clearData(); }));
+            Invoke((MethodInvoker)(() => { ClearData(); }));
 
         }
-        private void clearData()
+        public void NewUser(string login, bool logged)
         {
-            foreach (var item in conversations)
-            {
-                item.Value.Close();
-            }
-            conversations = new Dictionary<int, ConversationView>();
-            label5.Visible = false;
 
-            label1.Visible = true;
-            label2.Visible = true;
-            button3.Visible = true;
-            button4.Visible = true;
-            textBox4.Visible = true;
-            textBox5.Visible = true;
-            button2.Visible = false;
-            listBox1.Items.Clear();
-            listBox2.Items.Clear();
-            textBox4.Focus();
-        }
-    
-        
-
-        private void ClientView_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            //Disconnect?.Invoke(this, EventArgs.Empty);
-            var handler = Disconnect;
-            if (handler != null)
-            {
-                handler(this, EventArgs.Empty);
-            }
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            var args = new TryToConnectEventArgs( textBox5.Text, textBox4.Text);
-            var handler = ConnectionTry;
-            if (handler != null)
-            {
-                handler(this, args);
-            }
-        }
-
-       
-
-       
-        public void newUser(string login, bool logged)
-        {
-           
             if (logged)
             {
-                Action add = new Action(() => listBox1.Items.Add(login));
+                Action add = new Action(() => listBoxLogged.Items.Add(login));
                 Invoke(add);
             }
             else
             {
-                Action add = new Action(() => listBox2.Items.Add(login));
+                Action add = new Action(() => listBoxNotLogged.Items.Add(login));
                 Invoke(add);
             }
         }
@@ -155,22 +64,22 @@ namespace Client
             //MessageBox.Show("zmienia"+login);
             if (logged)
             {
-                
-                Action add = new Action(() => listBox1.Items.Add(login));
+
+                Action add = new Action(() => listBoxLogged.Items.Add(login));
                 Invoke(add);
-                Action remove = new Action(() => listBox2.Items.Remove(login));
+                Action remove = new Action(() => listBoxNotLogged.Items.Remove(login));
                 Invoke(remove);
-               
-                
+
+
             }
             else
             {
 
-                Action add = new Action(() => listBox2.Items.Add(login));
+                Action add = new Action(() => listBoxNotLogged.Items.Add(login));
                 Invoke(add);
-                Action remove = new Action(() => listBox1.Items.Remove(login));
+                Action remove = new Action(() => listBoxLogged.Items.Remove(login));
                 Invoke(remove);
-             
+
             }
         }
 
@@ -178,16 +87,16 @@ namespace Client
         {
 
 
-            
+
             if (!conversations.ContainsKey(id))
             {
-                Action createWindow = new Action(() => conversations.Add(id,new ConversationView(id,logins)));
+                Action createWindow = new Action(() => conversations.Add(id, new ConversationView(id, logins)));
                 Invoke(createWindow);
                 //conversation.Add(new Form2(id));
                 //IntPtr handle = conversations[id].Handle;
 
                 Action newWindow = new Action(() => conversations[id].Show());
-               Invoke(newWindow);
+                Invoke(newWindow);
 
                 Action newEvent = new Action(() => conversations[id].MessageSend += ClientView_MessageSend);
 
@@ -200,44 +109,44 @@ namespace Client
                 Action newWindow = new Action(() => conversations[id].Show());
                 Invoke(newWindow);
             }
-            
+
         }
 
-        
 
-        public void DisplayMessage(string message,string author, int id)
+
+        public void DisplayMessage(string message, string author, int id)
         {
             //MessageBox.Show("wyswietlam");
-            conversations[id].DisplayMessage(message,author);
-           
-           
+            conversations[id].DisplayMessage(message, author);
+
+
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             var selectedLogins = new List<string>();
-            foreach (var item in listBox1.SelectedItems)
+            foreach (var item in listBoxLogged.SelectedItems)
             {
                 selectedLogins.Add(item.ToString());
             }
-            foreach (var item in listBox2.SelectedItems)
+            foreach (var item in listBoxNotLogged.SelectedItems)
             {
                 selectedLogins.Add(item.ToString());
             }
-           
+
             var handler = NewConversationStart;
-            
-            if (handler != null&&selectedLogins.Count>0)
+
+            if (handler != null && selectedLogins.Count > 0)
             {
-                handler(this,selectedLogins);
+                handler(this, selectedLogins);
             }
 
         }
 
-       
+
         private void button2_Click_1(object sender, EventArgs e)
         {
-            clearData();
+            ClearData();
             var handler = Disconnect;
 
             if (handler != null)
@@ -251,7 +160,7 @@ namespace Client
         {
             if (e.KeyCode == Keys.Enter)
             {
-                button3_Click(this,null);
+                button3_Click(this, null);
                 e.Handled = true;
             }
         }
@@ -276,22 +185,7 @@ namespace Client
         private void listBox1_DoubleClick(object sender, EventArgs e)
         {
             var selectedLogins = new List<string>();
-            foreach (var item in listBox1.SelectedItems)
-            {
-                selectedLogins.Add(item.ToString());
-            }
-            var handler = NewConversationStart;
-
-            if (handler != null && selectedLogins.Count ==1 )
-            {
-                handler(this, selectedLogins);
-            }
-        }
-
-        private void listBox2_DoubleClick(object sender, EventArgs e)
-        {
-            var selectedLogins = new List<string>();
-            foreach (var item in listBox2.SelectedItems)
+            foreach (var item in listBoxLogged.SelectedItems)
             {
                 selectedLogins.Add(item.ToString());
             }
@@ -302,6 +196,101 @@ namespace Client
                 handler(this, selectedLogins);
             }
         }
+
+        private void listBox2_DoubleClick(object sender, EventArgs e)
+        {
+            var selectedLogins = new List<string>();
+            foreach (var item in listBoxNotLogged.SelectedItems)
+            {
+                selectedLogins.Add(item.ToString());
+            }
+            var handler = NewConversationStart;
+
+            if (handler != null && selectedLogins.Count == 1)
+            {
+                handler(this, selectedLogins);
+            }
+        }
+        private void CreateAccountView_createAccount(object sender, CreateAccountArgs e)
+        {
+
+            var handler = CreateAccount;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        private void ClientView_MessageSend(object sender, MessageSendEventArgs e)
+        {
+
+            //MessageSend?.Invoke(this, args);
+            var handler = MessageSend;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+        private void SetLogged()
+        {
+            labelLogin.Text = textBoxLogin.Text;
+            labelLogin.Visible = true;
+            textBoxPassword.Text = "";
+            textBoxLogin.Text = "";
+            label1.Visible = false;
+            label2.Visible = false;
+            buttonLogIn.Visible = false;
+            buttonRegister.Visible = false;
+            textBoxPassword.Visible = false;
+            textBoxLogin.Visible = false;
+            buttonLogOut.Visible = true;
+
+        }
+        private void ClearData()
+        {
+            foreach (var item in conversations)
+            {
+                item.Value.Close();
+            }
+            conversations = new Dictionary<int, ConversationView>();
+            labelLogin.Visible = false;
+
+            label1.Visible = true;
+            label2.Visible = true;
+            buttonLogIn.Visible = true;
+            buttonRegister.Visible = true;
+            textBoxPassword.Visible = true;
+            textBoxLogin.Visible = true;
+            buttonLogOut.Visible = false;
+            listBoxLogged.Items.Clear();
+            listBoxNotLogged.Items.Clear();
+            textBoxPassword.Focus();
+        }
+
+
+
+        private void ClientView_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //Disconnect?.Invoke(this, EventArgs.Empty);
+            var handler = Disconnect;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (textBoxPassword.Text == "" || textBoxLogin.Text == "")
+                return;
+            var args = new TryToConnectEventArgs(textBoxLogin.Text, textBoxPassword.Text);
+            var handler = ConnectionTry;
+            if (handler != null)
+            {
+                handler(this, args);
+            }
+        }
+
     }
-   
+
 }

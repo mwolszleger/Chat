@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button3 = new System.Windows.Forms.Button();
+            this.buttonRegister = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxPass = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -38,15 +38,20 @@
             this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // button3
+            // buttonRegister
             // 
-            this.button3.Location = new System.Drawing.Point(64, 187);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(160, 23);
-            this.button3.TabIndex = 15;
-            this.button3.Text = "zarejestruj";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.buttonRegister.BackColor = System.Drawing.Color.White;
+            this.buttonRegister.FlatAppearance.BorderSize = 0;
+            this.buttonRegister.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Gainsboro;
+            this.buttonRegister.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gainsboro;
+            this.buttonRegister.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.buttonRegister.Location = new System.Drawing.Point(64, 174);
+            this.buttonRegister.Name = "buttonRegister";
+            this.buttonRegister.Size = new System.Drawing.Size(160, 36);
+            this.buttonRegister.TabIndex = 3;
+            this.buttonRegister.Text = "zarejestruj";
+            this.buttonRegister.UseVisualStyleBackColor = false;
+            this.buttonRegister.Click += new System.EventHandler(this.button3_Click);
             // 
             // label2
             // 
@@ -64,7 +69,7 @@
             this.textBoxPass.MaxLength = 40;
             this.textBoxPass.Name = "textBoxPass";
             this.textBoxPass.Size = new System.Drawing.Size(160, 20);
-            this.textBoxPass.TabIndex = 13;
+            this.textBoxPass.TabIndex = 1;
             this.textBoxPass.UseSystemPasswordChar = true;
             this.textBoxPass.TextChanged += new System.EventHandler(this.textBoxPass_TextChanged);
             // 
@@ -84,7 +89,7 @@
             this.textBoxLogin.MaxLength = 40;
             this.textBoxLogin.Name = "textBoxLogin";
             this.textBoxLogin.Size = new System.Drawing.Size(160, 20);
-            this.textBoxLogin.TabIndex = 11;
+            this.textBoxLogin.TabIndex = 0;
             this.textBoxLogin.TextChanged += new System.EventHandler(this.textBoxLogin_TextChanged);
             // 
             // label3
@@ -103,19 +108,19 @@
             this.textBoxPass2.MaxLength = 40;
             this.textBoxPass2.Name = "textBoxPass2";
             this.textBoxPass2.Size = new System.Drawing.Size(160, 20);
-            this.textBoxPass2.TabIndex = 16;
+            this.textBoxPass2.TabIndex = 2;
             this.textBoxPass2.UseSystemPasswordChar = true;
             this.textBoxPass2.TextChanged += new System.EventHandler(this.textBoxPass2_TextChanged);
+            this.textBoxPass2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxPass2_KeyUp);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label4.Location = new System.Drawing.Point(61, 226);
+            this.label4.Location = new System.Drawing.Point(12, 223);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(79, 16);
+            this.label4.Size = new System.Drawing.Size(0, 16);
             this.label4.TabIndex = 18;
-            this.label4.Text = "Komunikat";
             // 
             // CreateAccountView
             // 
@@ -126,13 +131,15 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.textBoxPass2);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.buttonRegister);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBoxPass);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxLogin);
+            this.MaximumSize = new System.Drawing.Size(300, 300);
+            this.MinimumSize = new System.Drawing.Size(300, 300);
             this.Name = "CreateAccountView";
-            this.Text = "CreateAccountView";
+            this.Text = "Chat";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CreateAccountView_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -141,7 +148,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button buttonRegister;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBoxPass;
         private System.Windows.Forms.Label label1;
