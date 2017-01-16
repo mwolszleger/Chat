@@ -58,6 +58,7 @@ namespace Client
     class Client
     {
         public event EventHandler<ConnectionChangedEventArgs> ConnectionChanged;
+        public event EventHandler<bool> LogResult;
         public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
         public event EventHandler<UserEventArgs> NewUserAdded;
         public event EventHandler<UserEventArgs> ChangedUser;
@@ -362,12 +363,12 @@ namespace Client
         private void LoginSucceeded()
         {
             logged = true;
-            var args = new ConnectionChangedEventArgs(true);
+           
             //ConnectionChanged?.Invoke(this, args);
-            var handler = ConnectionChanged;
+            var handler = LogResult;
             if (handler != null)
             {
-                handler(this, args);
+                handler(this, true);
             }
         }
         private void ProcessOrder(string message)

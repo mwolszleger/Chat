@@ -30,7 +30,7 @@ namespace Client
             createAccountView.createAccount += CreateAccountView_createAccount;
 
         }
-        public void SetConnectionSucceeded()
+        public void SetLogInSucceeded()
         {
 
             Invoke((MethodInvoker)(() => { SetLogged(); }));
@@ -291,6 +291,10 @@ namespace Client
             }
         }
 
+        public void SetLogInFailed()
+        {
+            MessageBox.Show("Zły login/hasło");
+        }
     }
 
 }

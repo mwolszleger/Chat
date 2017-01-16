@@ -44,8 +44,10 @@ namespace Client
     {
 
         void NewConversation(int id, List<string>logins);
+ 
         void SetConnectionError();
-        void SetConnectionSucceeded();
+        void SetLogInSucceeded();
+        void SetLogInFailed();
         void DisplayMessage(string message,string author,int id);
         void NewUser(string login, bool logged);
         void UserChanged(string login, bool logged);
