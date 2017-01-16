@@ -21,16 +21,16 @@ namespace Client
             view.CreateAccount += View_CreateAccount;
             model.ConnectionChanged += Model_ConnectionChanged;
             model.MessageRecieved += Model_MessageRecieved;
-            model.NewUser += Model_NewUser;
+            model.NewUserAdded += Model_NewUser;
             model.ChangedUser += Model_ChangedUser;
             model.ConversationStart += Model_ConversationStart;
-            model.RegistrationResult += Model_RegistrationResult;
+            model.RegistrationResulted += Model_RegistrationResult;
             
         }
 
         private void View_CreateAccount(object sender, CreateAccountArgs e)
         {
-            model.registerUser(e.Login,e.Password);
+            model.RegisterUser(e.Login,e.Password);
         }
 
         private void Model_RegistrationResult(object sender, bool e)
@@ -55,7 +55,7 @@ namespace Client
 
         private void Model_NewUser(object sender, UserEventArgs e)
         {
-            view.newUser(e.Login,e.Logged);
+            view.NewUser(e.Login,e.Logged);
         }
 
         private void Model_MessageRecieved(object sender, MessageRecievedEventArgs e)
@@ -83,12 +83,12 @@ namespace Client
 
         private void View_Disconnect(object sender, EventArgs e)
         {
-            model.close();
+            model.Close();
         }
 
         private void View_ConnectionTry(object sender, TryToConnectEventArgs e)
         {
-            model.connectToServer(e.Login,e.Password);
+            model.ConnectToServer(e.Login,e.Password);
         }
     }
 }

@@ -8,8 +8,7 @@ namespace Client
 {
     public class TryToConnectEventArgs : EventArgs
     {
-        public string Ip { get; private set; }
-        public int Port { get; private set; }
+      
         public string Login { get; private set; }
         public string Password { get; private set; }
         public TryToConnectEventArgs(string login,string password)
@@ -48,7 +47,7 @@ namespace Client
         void SetConnectionError();
         void SetConnectionSucceeded();
         void DisplayMessage(string message,string author,int id);
-        void newUser(string login, bool logged);
+        void NewUser(string login, bool logged);
         void UserChanged(string login, bool logged);
         void RegistrationResult(bool e);
 

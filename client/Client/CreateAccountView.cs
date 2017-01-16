@@ -19,13 +19,55 @@ namespace Client
             InitializeComponent();
         }
 
+        
+        public void registrationSucceded()
+        {
+            
+           
+            textBoxPass.Text = "";
+            textBoxPass2.Text = "";
+            textBoxLogin.Text = "";
+            label4.Text = "Rejestracja się udała";
+            buttonRegister.Visible = false;
+
+        }
+
+        public void registrationFailed()
+        {
+            
+            label4.Text = "Rejestracja zakończona niepowodzeniem";
+        }
+
+        private void textBoxLogin_TextChanged(object sender, EventArgs e)
+        {
+            label4.Text = "";
+        }
+
+        private void textBoxPass_TextChanged(object sender, EventArgs e)
+        {
+            label4.Text = "";
+        }
+
+        private void textBoxPass2_TextChanged(object sender, EventArgs e)
+        {
+            label4.Text = "";
+        }
+
+        private void textBoxPass2_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                button3_Click(this, null);
+                e.Handled = true;
+            }
+        }
         private void CreateAccountView_FormClosing(object sender, FormClosingEventArgs e)
         {
             label4.Text = "";
             textBoxPass.Text = "";
             textBoxPass2.Text = "";
             textBoxLogin.Text = "";
-            button3.Visible = true;
+            buttonRegister.Visible = true;
             if (e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
@@ -57,36 +99,6 @@ namespace Client
             {
                 handler(this, args);
             }
-        }
-
-        public void registrationSucceded()
-        {
-            label4.Text = "Rejestracja się udała";
-            textBoxPass.Text = "";
-            textBoxPass2.Text = "";
-            textBoxLogin.Text = "";
-            button3.Visible = false;
-
-        }
-
-        public void registrationFailed()
-        {
-            label4.Text = "Rejestracja zakończona niepowodzeniem";
-        }
-
-        private void textBoxLogin_TextChanged(object sender, EventArgs e)
-        {
-            label4.Text = "";
-        }
-
-        private void textBoxPass_TextChanged(object sender, EventArgs e)
-        {
-            label4.Text = "";
-        }
-
-        private void textBoxPass2_TextChanged(object sender, EventArgs e)
-        {
-            label4.Text = "";
         }
     }
 }

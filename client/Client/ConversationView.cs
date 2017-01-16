@@ -20,32 +20,32 @@ namespace Client
         {
             InitializeComponent();
         }
-        
+
         private void button1_Click(object sender, EventArgs e)
         {
-            if (textBox2.Text == "")
+            if (textBoxMessage.Text == "")
                 return;
-            textBox1.AppendText("Ja: " + textBox2.Text + Environment.NewLine);
-            var args = new MessageSendEventArgs(textBox2.Text, id);
+            textBoxConversation.AppendText("Ja: " + textBoxMessage.Text + Environment.NewLine);
+            var args = new MessageSendEventArgs(textBoxMessage.Text, id);
 
             var handler = MessageSend;
             if (handler != null)
             {
                 handler(this, args);
             }
-            
-            textBox2.Clear();
+
+            textBoxMessage.Clear();
         }
 
-        public void DisplayMessage(string message,string author)
+        public void DisplayMessage(string message, string author)
         {
 
-            string text = author + ": "+message;
-            Action<string> updateAction = new Action<string>((value) => textBox1.AppendText(value));
-            textBox1.Invoke(updateAction, text);
-            textBox1.Invoke(updateAction, Environment.NewLine);
+            string text = author + ": " + message;
+            Action<string> updateAction = new Action<string>((value) => textBoxConversation.AppendText(value));
+            textBoxConversation.Invoke(updateAction, text);
+            textBoxConversation.Invoke(updateAction, Environment.NewLine);
         }
-        public ConversationView(int id,List<string>logins):this()
+        public ConversationView(int id, List<string> logins) : this()
         {
             this.id = id;
             this.Logins = logins;
@@ -63,6 +63,17 @@ namespace Client
             {
                 e.Cancel = true;
                 Hide();
+            }
+        }
+
+
+
+        private void textBox2_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                button1_Click(this, null);
+                e.Handled = true;
             }
         }
     }
