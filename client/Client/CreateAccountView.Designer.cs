@@ -44,6 +44,7 @@
             this.buttonRegister.FlatAppearance.BorderSize = 0;
             this.buttonRegister.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Gainsboro;
             this.buttonRegister.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gainsboro;
+            this.buttonRegister.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonRegister.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.buttonRegister.Location = new System.Drawing.Point(64, 174);
             this.buttonRegister.Name = "buttonRegister";

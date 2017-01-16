@@ -200,6 +200,7 @@ namespace Client
             StartConnection();
 
             SendMessage("register:" + login + ":" + ComputeHash(password));
+            this.login = login;
         }
         public void SendTextMessage(string message, int id)
         {
@@ -404,9 +405,11 @@ namespace Client
 
                     var recievers = splitted[2].Split(',');
                     var recieversList = recievers.ToList<string>();
+                    recieversList.Remove(" ");
                     for (int i = 0; i < recieversList.Count; i++)
                     {
                         recieversList[i] = recieversList[i].Replace(" ", "");
+                        Console.WriteLine("login"+ recieversList[i]+".");
 
                     }
                     RecievedMessage(splitted[1], recieversList, splitted[3]);
@@ -456,6 +459,7 @@ namespace Client
         {
             reciever.Remove(login);
             reciever.Add(author);
+           
             NewConversationStart(reciever);
             int index = -1;
             foreach (var item in conversations)
