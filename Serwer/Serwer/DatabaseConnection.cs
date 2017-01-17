@@ -42,6 +42,7 @@ namespace Serwer
                 builder.AllowZeroDateTime = true;
                 builder.ConvertZeroDateTime = true;
                 builder.Database = "ChatDB";
+                builder.CharacterSet = "utf8";
 
                 _dbConnection = new MySqlConnection(builder.ToString());
                 Console.WriteLine("Polaczono z baza danych");
@@ -166,32 +167,6 @@ namespace Serwer
         {
             return InsertOfflineMessage(order[0], order[1], order[2], order[3]);
         }
-        public bool CheckOfflineMessages(string login)
-        {
-            try
-            {
-                string tmp = "SELECT * FROM chatdb.offlinemessages where receiverS like \"" + login + "%\";";
-                _command.CommandText = tmp;
-                _reader = _command.ExecuteReader();
-                while (_reader.Read())
-                {
-                    _reader.Close();
-                    return true;
-                }
-
-                _reader.Close();
-                return false;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return false;
-            }
-            finally
-            {
-                _reader.Close();
-            }
-        }
         public string GetOfflineMessage(string login)
         {
             try
@@ -245,7 +220,6 @@ namespace Serwer
                 return false;
             }
         }
-
 
         private static string AppendLength(string str)
         {

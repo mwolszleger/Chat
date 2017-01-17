@@ -165,17 +165,17 @@ namespace Serwer
                     break;
 
                 case "login":
-                    // if (_myDBConnection.IfUserExists(splitedOrder[1]))//,splitedOrder[2]);   
-                    return this.Login(splitedOrder[1], client);
-                //InformSomebody("failToLogin", client);
+                    if(_myDBConnection.UserExists(splitedOrder[1],splitedOrder[2]))   
+                        return this.Login(splitedOrder[1], client);
+                    else
+                        InformSomebody("failToLog", client);
+                    break;
 
                 //login:nickname:shrtpass
                 //normal split
-                //return null;
-                //break;
 
                 case "register":
-                    return this.Register(splitedOrder[1], client);
+                    return this.Register(splitedOrder[1], splitedOrder[2], client);
 
                 default:
                     break;
@@ -270,14 +270,14 @@ namespace Serwer
             return cl;
         }
 
-        private Client Register(string nick, Socket client)
+        private Client Register(string nick, string shrtpass, Socket client)
         {
             if (_myDBConnection.UserExists(nick))
             {
                 client.Send(CreateByteArray(AppendLength("failToRegister")));
                 return null;
             }
-            _myDBConnection.InsertUser(nick);//, splitedOrder[2]);
+            _myDBConnection.InsertUser(nick, shrtpass);
             client.Send(CreateByteArray(AppendLength("successfulRegistration")));
             return this.Login(nick, client);
         }
