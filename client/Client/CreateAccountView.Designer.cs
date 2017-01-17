@@ -113,7 +113,8 @@
             this.textBoxPass2.TabIndex = 2;
             this.textBoxPass2.UseSystemPasswordChar = true;
             this.textBoxPass2.TextChanged += new System.EventHandler(this.textBoxPass2_TextChanged);
-            this.textBoxPass2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxPass2_KeyUp);
+            this.textBoxPass2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxPass2_KeyPress);
+           // this.textBoxPass2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxPass2_KeyUp);
             // 
             // label4
             // 
