@@ -53,14 +53,6 @@ namespace Client
             label4.Text = "";
         }
 
-        private void textBoxPass2_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                button3_Click(this, null);
-                e.Handled = true;
-            }
-        }
         private void CreateAccountView_FormClosing(object sender, FormClosingEventArgs e)
         {
             label4.Text = "";
@@ -98,6 +90,15 @@ namespace Client
             if (handler != null)
             {
                 handler(this, args);
+            }
+        }
+
+        private void textBoxPass2_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar ==(char) Keys.Enter)
+            {
+                button3_Click(this, null);
+                e.Handled = true;
             }
         }
     }

@@ -30,7 +30,7 @@ namespace Client
             createAccountView.createAccount += CreateAccountView_createAccount;
 
         }
-        public void SetConnectionSucceeded()
+        public void SetLogInSucceeded()
         {
 
             Invoke((MethodInvoker)(() => { SetLogged(); }));
@@ -156,14 +156,6 @@ namespace Client
 
         }
 
-        private void textBox4_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                button3_Click(this, null);
-                e.Handled = true;
-            }
-        }
 
         private void button4_Click(object sender, EventArgs e)
         {
@@ -291,6 +283,19 @@ namespace Client
             }
         }
 
+        public void SetLogInFailed()
+        {
+            MessageBox.Show("Zły login/hasło");
+        }
+
+        private void textBoxPassword_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar ==(char) Keys.Enter)
+            {
+                button3_Click(this, null);
+                e.Handled = true;
+            }
+        }
     }
 
 }

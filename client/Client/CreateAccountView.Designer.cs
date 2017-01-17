@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CreateAccountView));
             this.buttonRegister = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.textBoxPass = new System.Windows.Forms.TextBox();
@@ -44,6 +45,7 @@
             this.buttonRegister.FlatAppearance.BorderSize = 0;
             this.buttonRegister.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Gainsboro;
             this.buttonRegister.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gainsboro;
+            this.buttonRegister.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonRegister.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.buttonRegister.Location = new System.Drawing.Point(64, 174);
             this.buttonRegister.Name = "buttonRegister";
@@ -111,7 +113,8 @@
             this.textBoxPass2.TabIndex = 2;
             this.textBoxPass2.UseSystemPasswordChar = true;
             this.textBoxPass2.TextChanged += new System.EventHandler(this.textBoxPass2_TextChanged);
-            this.textBoxPass2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxPass2_KeyUp);
+            this.textBoxPass2.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxPass2_KeyPress);
+           // this.textBoxPass2.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxPass2_KeyUp);
             // 
             // label4
             // 
@@ -136,6 +139,7 @@
             this.Controls.Add(this.textBoxPass);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxLogin);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(300, 300);
             this.MinimumSize = new System.Drawing.Size(300, 300);
             this.Name = "CreateAccountView";

@@ -66,11 +66,9 @@ namespace Client
             }
         }
 
-
-
-        private void textBox2_KeyUp(object sender, KeyEventArgs e)
+        private void textBoxMessage_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyChar == (char)Keys.Enter)
             {
                 button1_Click(this, null);
                 e.Handled = true;

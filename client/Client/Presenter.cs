@@ -25,7 +25,20 @@ namespace Client
             model.ChangedUser += Model_ChangedUser;
             model.ConversationStart += Model_ConversationStart;
             model.RegistrationResulted += Model_RegistrationResult;
+            model.LogResult += Model_LogResult;
             
+        }
+
+        private void Model_LogResult(object sender, bool e)
+        {
+            if (e)
+            {
+                view.SetLogInSucceeded();
+            }
+            else
+            {
+                view.SetLogInFailed();
+            }
         }
 
         private void View_CreateAccount(object sender, CreateAccountArgs e)
@@ -68,7 +81,7 @@ namespace Client
         {
             if (e.Connected)
             {
-               view.SetConnectionSucceeded();
+               
             }
             else
             {

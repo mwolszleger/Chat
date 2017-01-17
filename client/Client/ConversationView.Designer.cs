@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConversationView));
             this.textBoxConversation = new System.Windows.Forms.TextBox();
             this.textBoxMessage = new System.Windows.Forms.TextBox();
             this.buttonSend = new System.Windows.Forms.Button();
@@ -37,7 +38,7 @@
             // textBoxConversation
             // 
             this.textBoxConversation.BackColor = System.Drawing.Color.Silver;
-            this.textBoxConversation.Location = new System.Drawing.Point(29, 140);
+            this.textBoxConversation.Location = new System.Drawing.Point(29, 201);
             this.textBoxConversation.MaximumSize = new System.Drawing.Size(303, 211);
             this.textBoxConversation.MinimumSize = new System.Drawing.Size(303, 211);
             this.textBoxConversation.Multiline = true;
@@ -51,10 +52,13 @@
             // 
             this.textBoxMessage.Location = new System.Drawing.Point(29, 59);
             this.textBoxMessage.MaxLength = 900;
+            this.textBoxMessage.Multiline = true;
             this.textBoxMessage.Name = "textBoxMessage";
-            this.textBoxMessage.Size = new System.Drawing.Size(303, 21);
+            this.textBoxMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxMessage.Size = new System.Drawing.Size(303, 86);
             this.textBoxMessage.TabIndex = 0;
-            this.textBoxMessage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyUp);
+            this.textBoxMessage.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxMessage_KeyPress);
+         //   this.textBoxMessage.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox2_KeyUp);
             // 
             // buttonSend
             // 
@@ -64,7 +68,7 @@
             this.buttonSend.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Gainsboro;
             this.buttonSend.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonSend.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.buttonSend.Location = new System.Drawing.Point(135, 89);
+            this.buttonSend.Location = new System.Drawing.Point(134, 151);
             this.buttonSend.Name = "buttonSend";
             this.buttonSend.Size = new System.Drawing.Size(87, 44);
             this.buttonSend.TabIndex = 6;
@@ -86,12 +90,15 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(350, 365);
+            this.ClientSize = new System.Drawing.Size(350, 433);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxConversation);
             this.Controls.Add(this.textBoxMessage);
             this.Controls.Add(this.buttonSend);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximumSize = new System.Drawing.Size(366, 472);
+            this.MinimumSize = new System.Drawing.Size(366, 472);
             this.Name = "ConversationView";
             this.Text = "Rozmowa";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form2_FormClosing);

@@ -58,6 +58,7 @@ namespace Client
     class Client
     {
         public event EventHandler<ConnectionChangedEventArgs> ConnectionChanged;
+        public event EventHandler<bool> LogResult;
         public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
         public event EventHandler<UserEventArgs> NewUserAdded;
         public event EventHandler<UserEventArgs> ChangedUser;
@@ -200,6 +201,7 @@ namespace Client
             StartConnection();
 
             SendMessage("register:" + login + ":" + ComputeHash(password));
+            this.login = login;
         }
         public void SendTextMessage(string message, int id)
         {
@@ -361,12 +363,12 @@ namespace Client
         private void LoginSucceeded()
         {
             logged = true;
-            var args = new ConnectionChangedEventArgs(true);
+           
             //ConnectionChanged?.Invoke(this, args);
-            var handler = ConnectionChanged;
+            var handler = LogResult;
             if (handler != null)
             {
-                handler(this, args);
+                handler(this, true);
             }
         }
         private void ProcessOrder(string message)
@@ -404,9 +406,11 @@ namespace Client
 
                     var recievers = splitted[2].Split(',');
                     var recieversList = recievers.ToList<string>();
+                    recieversList.Remove(" ");
                     for (int i = 0; i < recieversList.Count; i++)
                     {
                         recieversList[i] = recieversList[i].Replace(" ", "");
+                        Console.WriteLine("login"+ recieversList[i]+".");
 
                     }
                     RecievedMessage(splitted[1], recieversList, splitted[3]);
@@ -456,6 +460,7 @@ namespace Client
         {
             reciever.Remove(login);
             reciever.Add(author);
+           
             NewConversationStart(reciever);
             int index = -1;
             foreach (var item in conversations)
