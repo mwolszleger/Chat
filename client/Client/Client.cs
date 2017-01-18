@@ -49,7 +49,7 @@ namespace Client
     {
        public bool Result { get; private set; }
         public string Login { get; private set; }
-        public LogResultEventArgs(bool result,string login="")
+        public LogResultEventArgs(bool result,string login=null)
         {
             Result = result;
             Login = login;
@@ -439,9 +439,17 @@ namespace Client
                     break;
                 case "failToRegister":
                     RegistrationResult(false);
+                    Close();
                     break;
-
-
+                case "failToLog":
+                    var args = new LogResultEventArgs(false);
+                    var handler = LogResult;
+                    if (handler != null)
+                    {
+                        handler(this, args);
+                    }
+                    Close();
+                    break;
                 default:
                     break;
             }
