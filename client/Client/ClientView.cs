@@ -22,7 +22,7 @@ namespace Client
 
         private CreateAccountView createAccountView = new CreateAccountView();
         private Dictionary<int, ConversationView> conversations = new Dictionary<int, ConversationView>();
-
+        private string login;
         public ClientView()
         {
             InitializeComponent();
@@ -30,9 +30,9 @@ namespace Client
             createAccountView.createAccount += CreateAccountView_createAccount;
 
         }
-        public void SetLogInSucceeded()
+        public void SetLogInSucceeded(string login)
         {
-
+            this.login = login;
             Invoke((MethodInvoker)(() => { SetLogged(); }));
 
         }
@@ -225,7 +225,7 @@ namespace Client
         }
         private void SetLogged()
         {
-            labelLogin.Text = textBoxLogin.Text;
+            labelLogin.Text = login;
             labelLogin.Visible = true;
             textBoxPassword.Text = "";
             textBoxLogin.Text = "";

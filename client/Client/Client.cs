@@ -10,15 +10,7 @@ using System.Windows.Forms;
 namespace Client
 {
 
-    public class ConnectionChangedEventArgs : EventArgs
-    {
-        public bool Connected { get; private set; }
-
-        public ConnectionChangedEventArgs(bool connected)
-        {
-            Connected = connected;
-        }
-    }
+    
     public class MessageRecievedEventArgs : EventArgs
     {
         public string Message { get; private set; }
@@ -53,12 +45,22 @@ namespace Client
         }
 
     }
+    public class LogResultEventArgs : EventArgs
+    {
+       public bool Result { get; private set; }
+        public string Login { get; private set; }
+        public LogResultEventArgs(bool result,string login="")
+        {
+            Result = result;
+            Login = login;
+        }
 
+    }
 
     class Client
     {
-        public event EventHandler<ConnectionChangedEventArgs> ConnectionChanged;
-        public event EventHandler<bool> LogResult;
+        public event EventHandler<bool> ConnectionChanged;
+        public event EventHandler<LogResultEventArgs> LogResult;
         public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
         public event EventHandler<UserEventArgs> NewUserAdded;
         public event EventHandler<UserEventArgs> ChangedUser;
@@ -140,12 +142,12 @@ namespace Client
                 MessageBox.Show("Brak połączenia z serwerem");
                 connected = false;
                 logged = false;
-                var args = new ConnectionChangedEventArgs(false);
+               
                 //ConnectionChanged?.Invoke(this, args);
                 var handler = ConnectionChanged;
                 if (handler != null)
                 {
-                    handler(this, args);
+                    handler(this, false);
                 }
             }
 
@@ -179,11 +181,11 @@ namespace Client
                 {
                     Close();
                     MessageBox.Show("Brak połączenia z serwerem");
-                    var args = new ConnectionChangedEventArgs(false);
+                    
                     var handler = ConnectionChanged;
                     if (handler != null)
                     {
-                        handler(this, args);
+                        handler(this, false);
                     }
 
                 }
@@ -363,12 +365,12 @@ namespace Client
         private void LoginSucceeded()
         {
             logged = true;
-           
-            //ConnectionChanged?.Invoke(this, args);
+
+            var args = new LogResultEventArgs(true, login);
             var handler = LogResult;
             if (handler != null)
             {
-                handler(this, true);
+                handler(this, args);
             }
         }
         private void ProcessOrder(string message)
