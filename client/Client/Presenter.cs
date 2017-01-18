@@ -29,11 +29,11 @@ namespace Client
             
         }
 
-        private void Model_LogResult(object sender, bool e)
+        private void Model_LogResult(object sender, LogResultEventArgs e)
         {
-            if (e)
+            if (e.Result)
             {
-                view.SetLogInSucceeded();
+                view.SetLogInSucceeded(e.Login);
             }
             else
             {
@@ -77,9 +77,9 @@ namespace Client
             view.DisplayMessage(e.Message,e.Author,e.Id);
         }
 
-        private void Model_ConnectionChanged(object sender, ConnectionChangedEventArgs e)
+        private void Model_ConnectionChanged(object sender, bool e)
         {
-            if (e.Connected)
+            if (e)
             {
                
             }
