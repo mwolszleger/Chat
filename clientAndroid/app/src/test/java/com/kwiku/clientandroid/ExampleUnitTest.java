@@ -1,4 +1,4 @@
-package com.example.kwiku.chatofficial;
+package com.kwiku.clientandroid;
 
 import org.junit.Test;
 
