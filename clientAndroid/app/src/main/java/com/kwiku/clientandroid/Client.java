@@ -10,10 +10,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-
-/**
- * Created by Kwiku on 2017-01-17.
- */
+import java.util.ArrayList;
 
 public class Client {
 
@@ -21,8 +18,10 @@ public class Client {
     private static final String debugString = "meh";
 
     private static final Socket socket = new Socket();
+    private static CommandDeserializer commandDeserializer = new CommandDeserializer();
     private static UserLoggedInListener userLoggedInListener;
-    private static NewMessageListener newMessageListener;
+    private static LogOutListener logOutListener;
+    private static ArrayList<NewMessageListener> newMessageListener = new ArrayList<>();
 
     private static boolean isRecievingTaskRunning = false;
 
@@ -38,11 +37,10 @@ public class Client {
 
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-            bw.write("12login:" + login + ":a");
+            bw.write(createLoginCommand(login, password));
             bw.flush();
         } catch (IOException e) {
-            Log.e("exceptiom", e.getMessage());
-
+            e.printStackTrace();
         }
     }
 
@@ -59,8 +57,9 @@ public class Client {
 
                 System.out.println(message);
 
-                handleNewUser(message);
-                handleNewMessage(message);
+                for (String[] command : commandDeserializer.deserialize(message)) {
+                    performCommand(command);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,11 +84,21 @@ public class Client {
         setRecievingTaskRunning();
     }
 
-    public static void setOnNewMessageListener(NewMessageListener listener) {
-        newMessageListener = listener;
+    public static int setOnNewMessageListener(NewMessageListener listener) {
+        newMessageListener.add(listener);
+
+        return newMessageListener.size() - 1;
     }
 
-    private static void setRecievingTaskRunning() {
+    public static void removeOnNewMessageListener(int i) {
+        newMessageListener.remove(i);
+    }
+
+    public static void setOnLogOutListener(LogOutListener listener) {
+        logOutListener = listener;
+    }
+
+    public static void setRecievingTaskRunning() {
         isRecievingTaskRunning = true;
 
         new Thread(new Runnable() {
@@ -99,28 +108,50 @@ public class Client {
         }).start();
     }
 
-    private static void handleNewUser(String command) {
+    private static void handleNewUser(String userName) {
         if (userLoggedInListener == null) {
             return;
         }
 
-        if (command.contains("logged")) {
-            String userName = command.substring(command.lastIndexOf(":") + 1);
-            userLoggedInListener.onUserLoggedIn(userName);
+        userLoggedInListener.onUserLoggedIn(userName);
+    }
+
+    private static void handleLogOut(String userName) {
+        logOutListener.onLogOut(userName);
+    }
+
+    private static void handleNewMessage(String sender, String message) {
+        for (NewMessageListener listener : newMessageListener) {
+            listener.onNewMessage(sender, message);
         }
     }
 
-    private static void handleNewMessage(String command) {
-        if (newMessageListener == null) {
-            return;
-        }
+    private static void performCommand(String[] command) {
+        String commandName = command[0];
 
-        if (command.contains("sendMsg")) {
-            String[] x = command.split(":");
-            String sender = x[1];
-            String message = x[x.length - 1];
-            newMessageListener.onNewMessage(sender, message);
+        switch (commandName) {
+            case "logged" :
+                if (command.length <= 1) {
+                    return;
+                }
+
+                handleNewUser(command[1]);
+                break;
+
+            case "sendMsg":
+                handleNewMessage(command[1], command[3]);
+                break;
+
+            case "loggedOut":
+                handleLogOut(command[1]);
+                break;
         }
+    }
+
+    private static String createLoginCommand(String login, String password) {
+        String command = "login:" + login + ":" + password;
+
+        return command.length() + command;
     }
 
     public static void connectionClose(){

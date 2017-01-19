@@ -1,0 +1,2 @@
+C:\Users\Kwiku\Documents\GitHub\Chat\Serwer\Serwer\bin\Debug\Serwer.exe.config
+C:\Users\Kwiku\Documents\GitHub\Chat\Serwer\Serwer\obj\Debug\Serwer.csprojResolveAssemblyReference.cache

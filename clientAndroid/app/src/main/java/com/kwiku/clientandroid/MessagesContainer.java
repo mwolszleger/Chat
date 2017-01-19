@@ -4,10 +4,6 @@ import android.util.ArrayMap;
 
 import java.util.ArrayList;
 
-/**
- * Created by Kwiku on 2017-01-17.
- */
-
 public final class MessagesContainer {
     private static ArrayMap<String, ArrayList<Message>> conversations = new ArrayMap<>();
     private static ArrayList<Message> messages = new ArrayList<Message>();

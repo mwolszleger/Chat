@@ -2,6 +2,7 @@ package com.kwiku.clientandroid;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -57,11 +58,20 @@ public class Login extends AppCompatActivity {
         }
 
         else {
-            new Thread(new Runnable() {
+            Thread thread = new Thread(new Runnable() {
                 public void run() {
                     Client.ConnectionToSerwer(IP_SERWERA, login, haslo);
                 }
-            }).start();
+            });
+
+            thread.start();
+
+            try {
+                thread.join();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
 
             Intent intent_lista = new Intent(this, List.class);
             startActivity(intent_lista);
