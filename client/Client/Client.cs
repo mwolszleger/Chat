@@ -210,7 +210,7 @@ namespace Client
             string msg;
             if (conversations[id].IsSingleConversation())
             {
-                msg = "sendMsg:" + login + ":" + conversations[id].users[0].login + ":" + message;
+                msg = "sendMsg:" + login + ":" + conversations[id].users[0].Login + ":" + message;
 
             }
             else
@@ -218,9 +218,9 @@ namespace Client
                 msg = "broadcast:" + login + ":";
                 for (int i = 0; i < conversations[id].users.Count - 1; i++)
                 {
-                    msg += conversations[id].users[i].login + ",";
+                    msg += conversations[id].users[i].Login + ",";
                 }
-                msg += conversations[id].users.Last().login;
+                msg += conversations[id].users.Last().Login;
                 msg += ":" + message;
             }
             SendMessage(msg);
@@ -346,11 +346,11 @@ namespace Client
                 return;
             foreach (var item in users)
             {
-                if (item.login == login)
+                if (item.Login == login)
                 {
-                    if (item.logged == logged)
+                    if (item.Logged == logged)
                         return;
-                    item.logged = logged;
+                    item.Logged = logged;
                     break;
                 }
             }
@@ -508,7 +508,7 @@ namespace Client
         {
             for (int i = 0; i < users.Count; i++)
             {
-                if (users[i].login == login)
+                if (users[i].Login == login)
                     return i;
             }
             return -1;
@@ -517,7 +517,7 @@ namespace Client
         {
             foreach (var item in users)
             {
-                if (item.login == login)
+                if (item.Login == login)
                     return item;
 
             }

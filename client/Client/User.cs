@@ -2,12 +2,12 @@
 {
     class User
     {
-        public string login { get; private set; }
-        public bool logged { get; set; }
+        public string Login { get; private set; }
+        public bool Logged { get; set; }
         public User(string login, bool logged)
         {
-            this.login = login;
-            this.logged = logged;
+            this.Login = login;
+            this.Logged = logged;
         }
        
     }
