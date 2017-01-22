@@ -11,6 +11,10 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
+import android.util.Base64;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Client {
 
@@ -147,10 +151,36 @@ public class Client {
                 break;
         }
     }
+    private static String computeHash(String input) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.reset();
 
+        byte[] byteData = digest.digest(input.getBytes("UTF-8"));
+        String encoded = Base64.encodeToString(byteData,Base64.DEFAULT);
+        encoded=encoded.substring(0,encoded.length()-1);
+        return encoded;
+    }
     private static String createLoginCommand(String login, String password) {
-        String command = "login:" + login + ":" + password;
+        Log.e(debugString,password);
+        String hash="";
+        try {
+            hash=computeHash(password);
+        }
+        catch(NoSuchAlgorithmException e)
+        {
 
+            Log.e(debugString,e.getMessage());
+
+        }
+        catch(UnsupportedEncodingException ee)
+        {
+            Log.e(debugString,ee.getMessage());
+
+        }
+
+
+        String command = "login:" + login + ":" + hash;
+        Log.e(debugString,command.length() + command);
         return command.length() + command;
     }
 
