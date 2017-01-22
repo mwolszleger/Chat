@@ -45,7 +45,7 @@ public class Login extends AppCompatActivity {
         final String login = etLogin.getText().toString();
 
         EditText etHaslo = (EditText) findViewById(R.id.editText_haslo);
-        final String haslo = etLogin.getText().toString();
+        final String haslo = etHaslo.getText().toString();
 
         if(IP_SERWERA == null)
         {
